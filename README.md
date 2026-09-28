@@ -55,10 +55,10 @@ A dedicated note-taking area keeps lecture notes, project thinking and personal 
 CivicEye, AgriPulse and MetrikAI have their own place in ArchiSpace. Every project has an editable five-part story: its name, description, problem statement, ideal solution and lessons learned. Event details and outcomes sit alongside private workflow status, next steps, notes and milestones. Unknown progress is left unset rather than invented.
 
 - **CivicEye** — the team's flagship and passion project, linked to civiceye.co.in.
-- **AgriPulse** — shortlisted for NexHack at IITM Delhi. The team travelled to Delhi and narrowly missed making the elimination round.
+- **AgriPulse** — shortlisted for NexHack at IITM Delhi. The team travelled to Delhi and narrowly missed making the elimination round. The app aimed to combine leaf scanning and a central crop marketplace. Unresolved farmer-trust questions, excessive scope and insufficient research shaped the team’s biggest lesson: research thoroughly and talk to mentors and others before building.
 - **MetrikAI** — the team's SIH national hackathon project.
 
-These projects connect Archit's personal workspace with **404 Error Found**, the team behind the shared work. Public stories can move between ArchiSpace and the network website without carrying private academic records or workflow notes. New projects fit the same structure; unknown solutions and lessons remain unwritten rather than invented.
+These projects connect Archit's personal workspace with **404 Error Found**, the team behind the shared work. Public stories can move between ArchiSpace and the network website without carrying private academic records or workflow notes. New projects fit the same structure; unknown solutions and lessons remain unwritten rather than invented. With the optional shared publishing service connected, approved teammates can publish stories to both public websites without uploading files. Local drafts remain separate from the live publication.
 
 ## Beyond the classroom
 
@@ -114,7 +114,7 @@ ArchiSpace reflects that approach: thoughtful ideas, useful systems and space to
 
 Academic records, attendance and notes are saved in the current browser rather than automatically shared online. Full workspace backups are separate from public portfolio and résumé exports.
 
-Public exports include the profile and explicitly selected projects, not private academic records. The current workspace does not provide a password-protected account or cross-device cloud synchronisation.
+Public exports include the profile and explicitly selected projects, not private academic records. The private college workspace does not provide cross-device cloud synchronisation. An optional, separately authenticated publishing service shares public project stories only.
 
 ## Room to grow
 
@@ -123,3 +123,7 @@ ArchiSpace is intended to evolve alongside its owner, with room for new subjects
 ---
 
 **ArchiSpace — a little better, every single day.**
+
+## Open to readers, reserved for editors
+
+Everyone can explore the public website and project stories without an account. Choosing to edit opens a separate sign-in screen; only the five approved, verified team email identities can access the story editor. The private email list is not displayed on the site. When the optional backend is not configured, public browsing remains available and the editor stays locked.

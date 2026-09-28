@@ -11,3 +11,5 @@ deploy/
 *.log
 artifacts/
 .DS_Store
+
+*.private.sql

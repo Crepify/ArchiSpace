@@ -47,7 +47,7 @@ The separate repository `Crepify/404ErrorNetwork` hosts the 404 Error Found team
 
 ## Privacy and future services
 
-The app is not a password-protected online student account. Each browser has its own data. The workspace app shell is publicly accessible, and its noindex hint is not access control. No AI, Supabase database sync or analytics is connected.
+The app is not a password-protected online student account. Each browser has its own data. The workspace app shell is publicly accessible, and its noindex hint is not access control. No AI, private academic database sync or analytics is connected. Public project-story publishing can be activated separately using the optional Supabase integration.
 
 Authentication, server-side authorization and database policies are required before cloud sync. Model keys and privileged Supabase credentials must stay on a backend, never in client code or public build variables.
 
@@ -73,3 +73,13 @@ Initial public facts live in `src/projects.js` and `src/profile.js`. Older brows
 - `npm run build:deploy` — production workspace plus public pages.
 - With ArchiSpace on port 5173 and the network on 5174: `node smoke.mjs`, `node tools-smoke.mjs`, `node project-stories-smoke.mjs`.
 - The last suite covers story editing, round-trip imports/exports, flagship switching, mobile layouts and local preview/publishing separation. Playwright Chromium must be installed for browser tests.
+
+## Shared online public stories (1.5)
+
+See **ONLINE-PUBLISHING.md** for the one-time setup shared with 404ErrorNetwork. Public viewing stays anonymous; only the team story editor requires sign-in. Load the private exact-email allowlist and activate both Auth hooks as described in the guide. Both Vercel projects must use the same `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY`. The build validates them and rejects service-role/secret keys. Without both variables the optional cloud is disabled.
+
+`/portfolio/` loads the published cloud project collection using `deploy/live/public-stories.js`. It refreshes on page load, tab focus and approximately every 30 seconds while visible. It retains bundled/last-loaded content on network failure. The profile itself remains static. The public project list is shared; it is not a merge with personal local drafts.
+
+`/#projects` links to the authenticated team Studio but retains its browser-local projects and private workflow. `/#portfolio`, downloaded exports and `/resume.html` remain snapshots. No grades, attendance or notebook records are sent to Supabase. To transfer a local public story to the team, export public projects, load the latest online revision in Studio, import/review the file and Publish. Import replaces the draft list, so preserve other shared projects before publishing.
+
+Cloud editor/browser regression: `node cloud-publishing-smoke.mjs` starts temporary test servers and mocks Supabase requests. It does not configure or verify a hosted project. The SQL permission tests live in the team repository.

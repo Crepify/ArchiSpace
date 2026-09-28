@@ -1,3 +1,5 @@
+import {build,loadEnv} from 'vite';
+import {resolveCloudConfig} from '../src/cloud-config.js';
 import {mkdir,rm,readFile,writeFile,cp} from 'node:fs/promises';
 import {execFileSync} from 'node:child_process';
 import {ARCHIT_PROFILE,DEFAULT_SITE,normalizeSiteUrl} from '../src/profile.js';
@@ -13,7 +15,10 @@ if(process.env.PUBLIC_SITE_URL)snapshot.site.url=normalizeSiteUrl(process.env.PU
 if(process.env.PUBLIC_SITE_TITLE)snapshot.site.title=process.env.PUBLIC_SITE_TITLE;
 if(process.env.PUBLIC_SITE_DESCRIPTION)snapshot.site.description=process.env.PUBLIC_SITE_DESCRIPTION;
 await mkdir('deploy/portfolio',{recursive:true});
-await writeFile('deploy/portfolio/index.html',renderPublicSite(snapshot,{path:'/portfolio/'}));
+const cloudConfig=resolveCloudConfig({...loadEnv('production',process.cwd(),'VITE_'),...process.env});
+await build({configFile:false,define:{__STORY_CLOUD_CONFIG__:JSON.stringify(cloudConfig)},build:{lib:{entry:'src/public-stories.js',formats:['iife'],name:'ArchiSpaceLiveStories',fileName:()=> 'public-stories.js'},outDir:'deploy/live',emptyOutDir:false}});
+const portfolioHtml=renderPublicSite(snapshot,{path:'/portfolio/'}).replace('</body>','<script src="/live/public-stories.js" defer></script></body>');
+await writeFile('deploy/portfolio/index.html',portfolioHtml);
 await writeFile('deploy/resume.html',renderPublicSite(snapshot,{resume:true}));
 if(snapshot.site.url){await writeFile('deploy/robots.txt',`User-agent: *\nAllow: /portfolio/\nSitemap: ${snapshot.site.url}/sitemap.xml\n`);await writeFile('deploy/sitemap.xml',`<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>${snapshot.site.url}/portfolio/</loc></url></urlset>`);}
 console.log('ArchiSpace: complete college workspace at /, public portfolio at /portfolio/, résumé at /resume.html. No private browser data is published.');
