@@ -1,10 +1,11 @@
+import {migrateWorkspace} from './projects.js';
 // Public defaults only. Never put grades, attendance, passwords, or API secrets here.
 export const ARCHIT_PROFILE = {
   name: 'Archit Renjeev',
   headline: 'Backend-focused developer · AI & Data Science student',
   bio: 'Born in Kerala and raised in Bengaluru, I enjoy turning ideas into clear, practical solutions. Backend development and configuration are where I most like to contribute, and I’m interested in projects that bring hardware and software together.\n\nI listen closely, help simplify ideas, suggest new directions and bring people together around a shared goal. I have working knowledge of full-stack development, familiarity with game development, and foundations in web hosting and UI. I’m currently learning AI model training.',
   email: '',
-  github: '',
+  github: 'https://github.com/Crepify',
   linkedin: '',
   skills: 'Backend development & configuration, Full-stack development (working knowledge), GitHub configuration, Vercel, Supabase, Prompt engineering, Game development (familiarity), Web development & hosting fundamentals, UI fundamentals, AI model training (learning)',
   experience: ''
@@ -13,7 +14,7 @@ export const PROFILE_REVISION = 1;
 export const DEFAULT_SITE = {
   title: 'ArchiSpace · Archit Renjeev',
   description: 'ArchiSpace by Archit Renjeev — a backend-focused AI & Data Science student in Bengaluru, building clear ideas and collaborative projects. Currently learning AI model training.',
-  url: ''
+  url: 'https://architspace.vercel.app'
 };
 export function normalizeSiteUrl(value) {
   const raw=String(value??'').trim();
@@ -36,5 +37,5 @@ export function migratePersonalization(data) {
     }
     data.profileRevision=PROFILE_REVISION;
   }
-  return data;
+  return migrateWorkspace(data);
 }

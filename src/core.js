@@ -1,3 +1,4 @@
+import {seedProjects,PROJECT_STATUSES} from './projects.js';
 import {ARCHIT_PROFILE, DEFAULT_SITE, PROFILE_REVISION, normalizeSiteUrl} from './profile.js';
 export const GRADES = {O:10,'A+':9.5,A:9,'B+':8,B:7,C:6,P:5,F:0,FA:0,I:0};
 export const uid=()=>globalThis.crypto.randomUUID();
@@ -34,7 +35,7 @@ const rows=[
  ['I','23ENG101','Technical Communication',3,'2–0–3','Dr. Revathy Hemachandran']
 ];
 export const assessmentTemplate=()=>[['Quiz 1',10],['Quiz 2',10],['Mid-semester',50],['End-semester',30]].map(([name,max])=>({id:uid(),name,max,weight:max,score:'',date:''}));
-export function initial(){return {version:1,brandRevision:1,profileRevision:PROFILE_REVISION,profile:{...ARCHIT_PROFILE},site:{...DEFAULT_SITE},settings:{minimum:75,degreeCredits:180,target:9.5,accent:'#2d6a4f',gradePoints:{...GRADES},confirmed:false},courses:rows.map(([slot,code,name,credits,ltp,faculty])=>({id:uid(),slot,code,name,credits,ltp,faculty,semester:1,pf:slot==='G',include:slot!=='G',passPoints:5,grade:'',plan:'',attended:0,held:0,assessments:['G','H'].includes(slot)?[]:assessmentTemplate(),thresholds:{},targetMarks:85,minTotal:'',minEnd:'',notes:'',history:[]})),tasks:[],ideas:[],projects:[],features:[]};}
+export function initial(){return {version:1,toolsRevision:1,brandRevision:1,profileRevision:PROFILE_REVISION,profile:{...ARCHIT_PROFILE},site:{...DEFAULT_SITE},settings:{minimum:75,degreeCredits:180,target:9.5,accent:'#2d6a4f',gradePoints:{...GRADES},confirmed:false},courses:rows.map(([slot,code,name,credits,ltp,faculty])=>({id:uid(),slot,code,name,credits,ltp,faculty,semester:1,pf:slot==='G',include:slot!=='G',passPoints:5,grade:'',plan:'',attended:0,held:0,assessments:['G','H'].includes(slot)?[]:assessmentTemplate(),thresholds:{},targetMarks:85,minTotal:'',minEnd:'',notes:'',history:[]})),tasks:[],ideas:[],notes:[],projects:seedProjects(),features:[]};}
 export function validate(data){
  if(!data||data.version!==1||!data.settings||!data.profile||!Array.isArray(data.courses))throw Error('Not a supported ArchiSpace backup.');
  const num=(v,lo,hi)=>Number.isFinite(Number(v))&&Number(v)>=lo&&Number(v)<=hi;
@@ -60,5 +61,10 @@ export function validate(data){
  for(const x of data.tasks)if(!text(x.date)||!text(x.course)||typeof x.done!=='boolean')throw Error('Invalid task.');
  for(const x of data.ideas)if(!text(x.body)||!text(x.course)||!['Seed','Growing','Ready'].includes(x.status))throw Error('Invalid idea.');
  for(const x of data.projects)if(!['description','tech','url'].every(k=>text(x[k]))||typeof x.public!=='boolean')throw Error('Invalid project.');
+ if(data.notes!==undefined){
+  if(!Array.isArray(data.notes))throw Error('Invalid notebook.');
+  const seen=new Set();for(const n of data.notes){if(!n||!idOk(n.id)||seen.has(n.id)||!['title','body','category','course','projectId','updated'].every(k=>text(n[k]))||typeof n.pinned!=='boolean'||n.body.length>100000)throw Error('Invalid note.');seen.add(n.id);}
+ }
+ for(const p of data.projects){if(p.status!==undefined&&!PROJECT_STATUSES.includes(p.status))throw Error('Invalid project status.');for(const k of ['nextStep','context'])if(p[k]!==undefined&&!text(p[k]))throw Error('Invalid project detail.');if(p.milestones!==undefined&&(!Array.isArray(p.milestones)||p.milestones.some(m=>!m||!idOk(m.id)||!text(m.title)||typeof m.done!=='boolean')))throw Error('Invalid project milestone.');}
  return data;
 }

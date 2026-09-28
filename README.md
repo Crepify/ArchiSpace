@@ -4,6 +4,8 @@
 
 ArchiSpace brings college life and creative work together in one calm, organised website. Built around **Archit Renjeev’s** journey as an Artificial Intelligence & Data Science student at **Amrita Bengaluru**, it combines academic planning, everyday progress, project ideas and a personal portfolio.
 
+The website opens into the complete college workspace, not a portfolio-only page. Calculators, notes, projects and the personal portfolio are all accessible from the same navigation.
+
 The goal is simple: make it easier to understand where you stand, decide what to work on next and give your ideas room to become something real.
 
 ## The academic workspace
@@ -43,6 +45,20 @@ A task list turns larger ambitions into smaller steps, with optional due dates a
 ### Timetable & grade history
 
 The timetable keeps the original semester schedule close at hand. Grade-change history and backlog visibility provide context as recorded results evolve.
+
+## Your notebook
+
+A dedicated note-taking area keeps lecture notes, project thinking and personal reflections together. Notes save automatically in the current browser and can be searched, pinned, linked to courses or projects, and downloaded individually. They remain separate from the public portfolio.
+
+## Project dashboard
+
+CivicEye, AgriPulse and MetrikAI have their own place in ArchiSpace. Each project brings together its description, workflow status, next step, private notes and a milestone checklist. Unknown progress is left unset rather than invented.
+
+- **CivicEye** — the team's passion project, linked to civiceye.co.in.
+- **AgriPulse** — the team's NexHack trip project.
+- **MetrikAI** — the team's SIH project.
+
+These projects connect Archit's personal workspace with **404 Error Found**, the team behind the shared work.
 
 ## Beyond the classroom
 

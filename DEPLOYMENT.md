@@ -1,121 +1,56 @@
-# ArchiSpace: hosting & custom domain guide
+# ArchiSpace deployment
 
-## Current status
+## The homepage is now the college workspace
 
-- Your public profile is configured for **Archit Renjeev**.
-- The live development preview is available while its server is running. It is not a permanent Vercel deployment.
-- No domain has been bought, checked for availability, connected or verified.
-- The academic workspace is browser-local, with no account, backend sync or AI connection.
+The normal deployment always includes the complete ArchiSpace app at `/`: SGPA/CGPA, attendance, assessments, notes, project dashboard, ideas and portfolio editor. It no longer defaults to a public-portfolio-only page.
 
-## Two separate destinations
+`ARCHISPACE_DEPLOY_TARGET` and `VERDANT_DEPLOY_TARGET` no longer switch the build. Existing values are ignored to prevent an old environment setting from hiding the calculators again.
 
-| Destination | Purpose | Build mode |
-|---|---|---|
-| Public portfolio | Your bio, qualified skills, public projects, public links and résumé | `portfolio` (default) |
-| Personal workspace | College calculators, notes and the editor, with browser-local data | `workspace` (optional separate project) |
+## Vercel project
 
-You could eventually use your chosen root domain for the portfolio and an `app.` subdomain for the workspace. These are suggestions, not reserved addresses.
+Import `Crepify/ArchiSpace`, or use its existing connected project at `https://architspace.vercel.app`.
 
-Do not mistake a separate URL for authentication. Before storing personal academic data online, add login, server-side authorization and proper database policies. Simply configuring Supabase or a Vercel domain is not access control.
+The included `vercel.json` defines:
 
-## 1. Prepare the public content
+- Install: `npm ci`
+- Build: `npm run build:deploy`
+- Output directory: `deploy`
+- Root directory: repository root, where `package.json` lives
 
-In the workspace:
+After a new GitHub commit, Vercel must complete a fresh deployment for the live site to change. If the project is not connected to the repository, import it or redeploy manually. If Vercel is configured to use a different branch, root directory or output directory, correct those in the project's settings. A GitHub push alone is not proof that a deployment succeeded.
 
-1. Open **Portfolio & résumé → Edit profile**.
-2. Add real public GitHub/LinkedIn links and a contact email if you want them published. These are intentionally blank until you provide them.
-3. Add projects and explicitly check **Include this project in public portfolio and résumé exports** for projects you want to share.
-4. Open **Settings & sources → Website & hosting**.
-5. Edit the site title and search/sharing description. Leave the canonical URL blank until you have chosen a real address.
-6. Click **Download public config**.
-7. Put the downloaded `public-profile.json` next to `package.json` in the project root and review its contents.
+## Destinations
 
-This config is an allowlisted snapshot of your public profile, site metadata and public projects. It excludes grades, attendance, course notes, private project drafts, tasks and backups. It can contain the public email/links you deliberately entered.
+- `/` — complete college workspace.
+- `/#grades` — SGPA/CGPA calculator.
+- `/#notes` — personal notebook.
+- `/#projects` — personal project dashboard.
+- `/#portfolio` — profile/project editor.
+- `/portfolio/` — public-only portfolio snapshot.
+- `/resume.html` — public printable résumé.
 
-Browser-local edits do not silently update repository files or a live site. Repeat the export and redeploy when you update public content.
+The static public snapshots use the public defaults, or a reviewed `public-profile.json` exported from Website & hosting and placed in the repository root. They never include private browser-local notes, marks, attendance or project next steps.
 
-If no config file is present, the build uses Archit's public defaults in `src/profile.js`. No projects, job titles, professional experience, contact details or academic results are fabricated.
+Optional public metadata variables remain `PUBLIC_SITE_URL`, `PUBLIC_SITE_TITLE` and `PUBLIC_SITE_DESCRIPTION`. They do not control whether the academic tools exist. The build script reads shell/Vercel variables; it does not automatically load a local `.env` file.
 
-## 2. Deploy the portfolio to Vercel when ready
+## Notes and project data
 
-1. Create your own GitHub repository and upload the source code, **not** `node_modules`, `dist`, `deploy`, credentials or private backups.
-2. Import the repository into your Vercel account.
-3. Set the root directory to the folder containing `package.json` and `vercel.json` (for example, `ArchiSpace` if you uploaded the outer folder).
-4. The included `vercel.json` selects:
-   - Install: `npm ci`
-   - Build: `npm run build:deploy`
-   - Output: `deploy`
-   - Framework: no preset required for the generated public HTML
-5. Leave `ARCHISPACE_DEPLOY_TARGET` unset or set it to `portfolio`.
-6. Deploy, then review the generated portfolio and `/resume.html` on Vercel's assigned project URL.
+Notes, project workflow states, private next steps, milestones, grades and attendance are browser-local. Saving in the app does not upload them to GitHub, Vercel or the team site. Full JSON backups include this private workspace data; keep them out of repositories.
 
-You control the repository, Vercel account and permissions. No credentials should be pasted into chat or committed to source. Hosting/domain availability, provider terms and any charges must be checked when you choose to deploy.
+Existing version-1 backups remain accepted. The migration adds an empty notebook and the three user-provided team projects once, without replacing existing projects or academic records. Project progress and technical details are not invented. Notes and private project workflow fields are excluded from public portfolio exports.
 
-### Optional build variables
+The browser storage key is deliberately retained through renaming and feature additions. A new domain or origin has separate storage: export a full backup on the old origin, then import it on the new origin.
 
-Set these in the Vercel project's build environment. They are public configuration, not secrets.
+## Team network
 
-| Variable | Default | Purpose |
-|---|---|---|
-| `ARCHISPACE_DEPLOY_TARGET` | `portfolio` | `portfolio` or `workspace` |
-| `PUBLIC_SITE_URL` | Config URL, otherwise blank | HTTPS origin used in portfolio canonical/Open Graph URL and sitemap |
-| `PUBLIC_SITE_TITLE` | Public config title | Browser/social title |
-| `PUBLIC_SITE_DESCRIPTION` | Public config description | Search/social description |
+The separate repository `Crepify/404ErrorNetwork` hosts the 404 Error Found team website. Archit's card links to `https://architspace.vercel.app`. Other teammates' URLs remain unset until supplied. No personal academic data is shared between sites.
 
-Environment variables override matching fields in `public-profile.json` for that deployment. When a public site URL is supplied, the build generates `robots.txt` and `sitemap.xml`; with no URL, it omits the canonical URL and sitemap instead of inventing an address.
+## Privacy and future services
 
-For local builds, set variables in your shell (the script does not automatically load `.env`):
+The app is not a password-protected online student account. Each browser has its own data. The workspace app shell is publicly accessible, and its noindex hint is not access control. No AI, Supabase database sync or analytics is connected.
 
-```bash
-npm ci
-npm run build:deploy
-# Optional example, replace with a domain you actually control:
-PUBLIC_SITE_URL=https://your-domain.example npm run build:deploy
-```
+Authentication, server-side authorization and database policies are required before cloud sync. Model keys and privileged Supabase credentials must stay on a backend, never in client code or public build variables.
 
-`.env.example` documents the same variables. Do not place private keys in public build variables.
+## Custom domains
 
-## 3. Add a custom domain later
-
-1. Decide on an available domain and purchase it through a registrar you choose, after reviewing price and renewal terms. No purchase is automated by this site.
-2. In your Vercel project, use its domain settings to add the domain and any `www` variant you want.
-3. Follow the exact DNS records displayed by Vercel for that domain. Do not use guessed A/CNAME values. Keep unrelated email/MX/TXT records unless you intend to change them.
-4. Wait for ownership/DNS checks and HTTPS certificate provisioning, and verify that the site loads.
-5. Choose one canonical address and use provider-supported redirects for other variants.
-6. Set `PUBLIC_SITE_URL` to the final HTTPS origin and redeploy; or save it in Website & hosting, re-export `public-profile.json`, commit it and redeploy.
-
-Saving a URL in the app only changes export metadata. It cannot buy the domain, prove ownership, configure DNS, provision a certificate or verify deployment status.
-
-## 4. Optional separate workspace deployment
-
-Import the same repository into a **second** Vercel project. Set:
-
-```text
-ARCHISPACE_DEPLOY_TARGET=workspace
-```
-
-The same deployment command then builds the Vite app into `deploy` instead of publishing the public portfolio. Hash routes (`#grades`, `#settings`, etc.) do not require SPA path rewrites.
-
-This hosts only the app shell and initial seed configuration. Each visitor's entered academic data remains in their own browser. The site is not an authenticated portal, cloud backup, multi-user service or secret URL. A public workspace build also contains the timetable asset and publicly readable source bundle, so choose the public-only mode if you only want to share a portfolio.
-
-The workspace page uses `noindex,nofollow` as an indexing hint, **not** a security barrier.
-
-### Changing the workspace URL or domain
-
-LocalStorage is origin-specific. A preview URL, a Vercel production URL, a custom root domain and an `app.` subdomain have separate storage.
-
-1. On the old workspace origin, export a **full private backup** from Settings.
-2. Keep the file off GitHub and out of the public deployment.
-3. Open the workspace at the new origin.
-4. Import the backup and verify your grades, notes and attendance.
-5. Keep a secure copy until you are satisfied everything transferred.
-
-Old version-1 backups are accepted. One-time personalisation fills untouched blank profile defaults with Archit's information; existing grades, course notes, projects and edited bio fields remain intact.
-
-## 5. Future Supabase / personal AI
-
-Neither is connected in this release.
-
-Before cloud sync: design authentication, table ownership, row-level security, server-side access control, deletion/export policies and restore procedures. Never expose service-role credentials.
-
-For a future AI assistant: keep model API credentials on a backend, choose explicitly which profile/academic information it can access, and do not train or upload personal records without consent. No API keys are needed for the current calculators or public portfolio.
+Choose and purchase a domain through your registrar when ready. Add it in Vercel and follow the exact DNS records Vercel provides; do not guess A/CNAME values or delete unrelated email records. Confirm ownership, HTTPS and redirects, then update public metadata. This code does not buy, reserve or verify a domain.
