@@ -1,6 +1,6 @@
 {
   "name": "archispace",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "main": "index.js",
   "scripts": {
     "dev": "vite --host 0.0.0.0",
@@ -11,7 +11,7 @@
   "keywords": [],
   "author": "Archit Renjeev",
   "license": "ISC",
-  "description": "ArchiSpace — Archit Renjeev’s personal academic workspace and portfolio",
+  "description": "ArchiSpace \u2014 Archit Renjeev\u2019s personal academic workspace and portfolio",
   "devDependencies": {
     "@playwright/test": "^1.63.0",
     "vite": "^8.3.1"

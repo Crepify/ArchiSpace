@@ -54,3 +54,22 @@ Authentication, server-side authorization and database policies are required bef
 ## Custom domains
 
 Choose and purchase a domain through your registrar when ready. Add it in Vercel and follow the exact DNS records Vercel provides; do not guess A/CNAME values or delete unrelated email records. Confirm ownership, HTTPS and redirects, then update public metadata. This code does not buy, reserve or verify a domain.
+
+## Project stories and the expanded profile (1.4)
+
+Open **Projects → Add project / Edit** for the five story fields, flagship switch, event name/type/venue/location/outcome, links and tools. Story fields are optional except the name. There is at most one flagship. Workflow status, next step, milestones and linked notes stay private.
+
+**Export public projects** creates `404-projects.json` (`format: "404-projects-v1"`), containing only projects marked public. Import it in the network's Project Studio. The reverse path is **Project Studio → Export for ArchiSpace**, followed by **Projects → Import project stories**. You can also import the team's `content/site.json` or an ArchiSpace `public-profile.json`. Importing is confirmed first. Existing projects match by ID, then name; their private state and public/private visibility are retained. New imported stories are public. Imports do not delete projects absent from the file. Review exports before sharing them.
+
+This is manual content exchange, not automatic synchronization. Neither site reads the other's local storage. Importing a story into ArchiSpace does not update the deployed public portfolio: export the public profile from **Portfolio → Website & hosting**, place `public-profile.json` at the repository root, then commit/redeploy. Never upload the full workspace backup.
+
+Canonical project fields: `id`, `name` (or `title` in ArchiSpace), `description`, `problemStatement`, `idealSolution`, `lessonsLearned`, `flagship`, `eventName`, `eventType`, `eventVenue`, `eventLocation`, `eventOutcome`, `context`, `tech`, `url`, `repository`, `linkLabel`, `visual`. Stable IDs are important for merging; do not change them needlessly. The shared schema module is `src/project-schema.js` in both repos. Keep its validation and interchange format in sync.
+
+Initial public facts live in `src/projects.js` and `src/profile.js`. Older browser records migrate without replacing custom descriptions, deliberately empty story fields, grades, notes or a custom bio. The exact earlier default biography updates to the expanded bio. Interests and startup aspiration are editable in **Portfolio → Edit profile**. Existing user customizations intentionally win over new defaults.
+
+### Checks
+
+- `npm test` — academics, migrations, profile, story validation, HTML escaping and privacy.
+- `npm run build:deploy` — production workspace plus public pages.
+- With ArchiSpace on port 5173 and the network on 5174: `node smoke.mjs`, `node tools-smoke.mjs`, `node project-stories-smoke.mjs`.
+- The last suite covers story editing, round-trip imports/exports, flagship switching, mobile layouts and local preview/publishing separation. Playwright Chromium must be installed for browser tests.

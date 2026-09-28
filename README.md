@@ -52,13 +52,13 @@ A dedicated note-taking area keeps lecture notes, project thinking and personal 
 
 ## Project dashboard
 
-CivicEye, AgriPulse and MetrikAI have their own place in ArchiSpace. Each project brings together its description, workflow status, next step, private notes and a milestone checklist. Unknown progress is left unset rather than invented.
+CivicEye, AgriPulse and MetrikAI have their own place in ArchiSpace. Every project has an editable five-part story: its name, description, problem statement, ideal solution and lessons learned. Event details and outcomes sit alongside private workflow status, next steps, notes and milestones. Unknown progress is left unset rather than invented.
 
-- **CivicEye** — the team's passion project, linked to civiceye.co.in.
-- **AgriPulse** — the team's NexHack trip project.
-- **MetrikAI** — the team's SIH project.
+- **CivicEye** — the team's flagship and passion project, linked to civiceye.co.in.
+- **AgriPulse** — shortlisted for NexHack at IITM Delhi. The team travelled to Delhi and narrowly missed making the elimination round.
+- **MetrikAI** — the team's SIH national hackathon project.
 
-These projects connect Archit's personal workspace with **404 Error Found**, the team behind the shared work.
+These projects connect Archit's personal workspace with **404 Error Found**, the team behind the shared work. Public stories can move between ArchiSpace and the network website without carrying private academic records or workflow notes. New projects fit the same structure; unknown solutions and lessons remain unwritten rather than invented.
 
 ## Beyond the classroom
 
@@ -104,7 +104,9 @@ The workspace is designed to feel personal rather than institutional: a place fo
 
 **Archit Renjeev** was born in Kerala and raised in Bengaluru. He is a backend-focused developer and AI & Data Science student who enjoys turning ideas into clear, practical solutions.
 
-His interests include backend development, full-stack work, game development and projects that connect hardware with software. He values listening, refining ideas, suggesting new directions and bringing people together around a shared goal. AI model training is part of his current learning journey.
+He is a gaming, technology and automotive enthusiast, curious about electrical and mechanical systems, software, hardware, cars and bikes. New-generation technology, AI and entrepreneurship excite him—and he is a big Iron Man fan. He values listening, refining ideas, suggesting new directions and bringing people together around a shared goal. AI model training is part of his current learning journey.
+
+One day, Archit hopes to build a startup with his friends and partners in **404 Error Found**. It is an ambition for the future, not a claim that the team is already a company.
 
 ArchiSpace reflects that approach: thoughtful ideas, useful systems and space to keep improving.
 
