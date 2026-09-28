@@ -1,20 +1,25 @@
 {
   "name": "archispace",
-  "version": "1.5.0",
+  "version": "2.0.0",
   "main": "index.js",
   "scripts": {
     "dev": "vite --host 0.0.0.0",
     "build": "vite build",
-    "test": "node --test src/core.test.js",
-    "build:deploy": "node scripts/build-deploy.mjs"
+    "test": "node --test src/core.test.js src/personal-security.test.js",
+    "build:deploy": "node scripts/build-deploy.mjs",
+    "test:access": "node personal-access-smoke.mjs"
   },
   "keywords": [],
   "author": "Archit Renjeev",
   "license": "ISC",
   "description": "ArchiSpace \u2014 Archit Renjeev\u2019s personal academic workspace and portfolio",
   "devDependencies": {
+    "@electric-sql/pglite": "^0.5.8",
     "@playwright/test": "^1.63.0",
     "vite": "^8.3.1"
   },
-  "type": "module"
+  "type": "module",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.109.0"
+  }
 }

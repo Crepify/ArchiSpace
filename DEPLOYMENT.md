@@ -1,85 +1,109 @@
-# ArchiSpace deployment
+# ArchiSpace deployment — viewer-first, owner-only workspace
 
-## The homepage is now the college workspace
+## Architecture
 
-The normal deployment always includes the complete ArchiSpace app at `/`: SGPA/CGPA, attendance, assessments, notes, project dashboard, ideas and portfolio editor. It no longer defaults to a public-portfolio-only page.
+At Archit's request, version 2 opens in **viewer mode**, not an anonymous editable workspace. The full college workspace is preserved behind sole-owner email verification. Public calculators remain available without an account.
 
-`ARCHISPACE_DEPLOY_TARGET` and `VERDANT_DEPLOY_TARGET` no longer switch the build. Existing values are ignored to prevent an old environment setting from hiding the calculators again.
+| Destination | Purpose |
+|---|---|
+| `/` | Public profile and selected projects; no private data reads |
+| `/portfolio/` | Alias of the public viewer |
+| `/tools.html` | Independent temporary GPA, attendance, marks and CGPA-target tools |
+| `/owner.html` | Sole-owner sign-in and full private college workspace |
+| `/owner.html#notes` | Owner notebook, after authentication |
+| `/owner.html#projects` | Owner project dashboard, after authentication |
+| `/owner.html#portfolio` | Private profile editor, after authentication |
+| `/share.html#TOKEN` | Selected read-only snapshot, subject to expiry/revocation |
+| `/resume.html` | Build-time public résumé snapshot |
 
-## Vercel project
+Legacy calculator fragments such as `/#grades` go to public tools. Public `/#projects` points to the public project section, not the private project editor. Legacy private-section fragments redirect to the owner gate.
 
-Import `Crepify/ArchiSpace`, or use its existing connected project at `https://architspace.vercel.app`.
+`ARCHISPACE_DEPLOY_TARGET` and `VERDANT_DEPLOY_TARGET` are still ignored. An environment flag cannot restore an anonymous private workspace. Calculators are part of every build.
+
+## Vercel
+
+Repository: `Crepify/ArchiSpace` · intended production domain: `https://architspace.vercel.app`
 
 The included `vercel.json` defines:
 
 - Install: `npm ci`
 - Build: `npm run build:deploy`
-- Output directory: `deploy`
-- Root directory: repository root, where `package.json` lives
+- Output: `deploy`
+- Repository root is the project root.
 
-After a new GitHub commit, Vercel must complete a fresh deployment for the live site to change. If the project is not connected to the repository, import it or redeploy manually. If Vercel is configured to use a different branch, root directory or output directory, correct those in the project's settings. A GitHub push alone is not proof that a deployment succeeded.
+Older standalone `ArchiSpace.html` / `Verdant.html` downloads belong to the previous browser-local release; do not deploy them as this gated version. Use the current source and build below.
 
-## Destinations
+A new successful deployment is required to change the hosted code. A local build or GitHub push does not prove that the production site changed. Version 2 is prepared locally; verify the actual deployed commit before treating it as live.
 
-- `/` — complete college workspace.
-- `/#grades` — SGPA/CGPA calculator.
-- `/#notes` — personal notebook.
-- `/#projects` — personal project dashboard.
-- `/#portfolio` — profile/project editor.
-- `/portfolio/` — public-only portfolio snapshot.
-- `/resume.html` — public printable résumé.
+Owner/share pages use noindex, no-referrer and no-store response headers. Those are privacy hygiene, not authorization. Backend functions and RLS enforce access. Private application JavaScript remains downloadable like any client application, but it contains no user records or owner access email.
 
-The static public snapshots use the public defaults, or a reviewed `public-profile.json` exported from Website & hosting and placed in the repository root. They never include private browser-local notes, marks, attendance or project next steps.
+## Two independent Supabase connections
 
-Optional public metadata variables remain `PUBLIC_SITE_URL`, `PUBLIC_SITE_TITLE` and `PUBLIC_SITE_DESCRIPTION`. They do not control whether the academic tools exist. The build script reads shell/Vercel variables; it does not automatically load a local `.env` file.
+Follow **PERSONAL-SUPABASE.md** for the NEW personal project, sole-owner private SQL seed, invited owner account, confirmation ON, signup OFF, both Auth hooks, SMTP/code template, redirects and real hosted validation.
 
-## Notes and project data
+```text
+VITE_ARCHISPACE_SUPABASE_URL=NEW_PERSONAL_PROJECT_URL
+VITE_ARCHISPACE_SUPABASE_PUBLISHABLE_KEY=PERSONAL_PUBLIC_KEY
+```
 
-Notes, project workflow states, private next steps, milestones, grades and attendance are browser-local. Saving in the app does not upload them to GitHub, Vercel or the team site. Full JSON backups include this private workspace data; keep them out of repositories.
+Follow **ONLINE-PUBLISHING.md** for the separate shared team-story project:
 
-Existing version-1 backups remain accepted. The migration adds an empty notebook and the three user-provided team projects once, without replacing existing projects or academic records. Project progress and technical details are not invented. Notes and private project workflow fields are excluded from public portfolio exports.
+```text
+VITE_SUPABASE_URL=TEAM_PROJECT_URL
+VITE_SUPABASE_PUBLISHABLE_KEY=TEAM_PUBLIC_KEY
+```
 
-The browser storage key is deliberately retained through renaming and feature additions. A new domain or origin has separate storage: export a full backup on the old origin, then import it on the new origin.
+Do not reuse the team project or five-editor allowlist for personal storage. Both keys must be public publishable/anon keys, never privileged credentials. Vite reads ignored local environment files for local builds; Vercel supplies its environment variables at build time.
 
-## Team network
+Without personal configuration, the owner gate stays locked and shared links cannot resolve. The public viewer and calculators still work. Without team configuration, approved bundled/personal-published projects appear instead of live team publications.
 
-The separate repository `Crepify/404ErrorNetwork` hosts the 404 Error Found team website. Archit's card links to `https://architspace.vercel.app`. Other teammates' URLs remain unset until supplied. No personal academic data is shared between sites.
+## Public publishing versus private saves
 
-## Privacy and future services
+The owner workspace autosaves privately with revision/conflict checks. This never changes public pages by itself.
 
-The app is not a password-protected online student account. Each browser has its own data. The workspace app shell is publicly accessible, and its noindex hint is not access control. No AI, private academic database sync or analytics is connected. Public project-story publishing can be activated separately using the optional Supabase integration.
+**Publish public profile** shows a preview and explicitly publishes the allowlisted public profile/projects. When the independent team feed is enabled and has a publication, its project collection takes precedence on public pages; personal profile publishing does not replace the team's stories. Both feeds refresh approximately every 30 seconds while visible and on focus.
 
-Authentication, server-side authorization and database policies are required before cloud sync. Model keys and privileged Supabase credentials must stay on a backend, never in client code or public build variables.
+The public viewer retains its last loaded or approved bundled snapshot on a service outage. Shared private links fail closed instead, checking their access every 15 seconds while visible and on focus.
+
+Individual share links are fixed selected-item snapshots, not a live workspace feed. Anyone holding a link can read it, but cannot edit or discover unselected records. Revocation affects subsequent reads, not already-saved copies.
+
+## Backups and migration
+
+Existing version-1 full backups remain supported **inside the authenticated owner workspace**. Grades, notes, workflow details, custom biography and intentionally blank story fields are preserved by the migration. No actual marks or attendance are fabricated.
+
+Older browser data under `verdant.personal.v1` is ignored by public pages. Only the verified owner's **Older browser data** panel can review/import it. Download a private backup, import, wait for a cloud save confirmation and only then remove the old plaintext copy if appropriate. A browser-local copy is not protected against someone with access to that browser's developer tools.
+
+Full private JSON backups and `*.private.sql` files must never be published. They are excluded from the supplied source archive. The SQL owner identity file is supplied separately, outside Git.
+
+## Build-time public snapshots and metadata
+
+`npm run build:deploy` copies the four Vite entries and adds `/portfolio/`, `/resume.html` and robots directives. The bundled public snapshot uses supplied defaults or a reviewed `public-profile.json` exported by the owner. A full workspace backup is rejected as the public-profile input.
+
+Optional metadata variables are `PUBLIC_SITE_URL`, `PUBLIC_SITE_TITLE` and `PUBLIC_SITE_DESCRIPTION`. The build script reads them from the shell/Vercel environment. They do not enable owner access or hide calculators.
+
+The downloadable résumé and standalone HTML exports remain snapshots. Publishing a cloud profile does not regenerate `/resume.html` or downloaded files: update the reviewed public snapshot and rebuild, or export a new résumé from the owner workspace.
+
+## Team project exchange
+
+The owner can export public projects using the `404-projects-v1` format and import reviewed public stories from the team. Private workflow state, notes and academic records are excluded. Existing records merge by stable ID/name without deleting unmentioned projects or replacing their private fields.
+
+To publish a personal story through the team feed, load the latest online revision in the team's authenticated Studio, import/review the public project file, preview and explicitly Publish. Import replaces that Studio draft list, so preserve other shared projects. The personal autosave is not team publication.
+
+Canonical interchange fields and validation remain in `src/project-schema.js` in both repositories. Unknown project facts remain blank. AgriPulse's event remains **NexHack at IITM Delhi**; the future startup remains an aspiration.
+
+## Checks
+
+```text
+npm test
+npx playwright install chromium
+npm run test:access
+npm run build:deploy
+```
+
+The unit suite covers academic calculations, migration, escaping, public allowlists, the separate config, actual PostgreSQL permissions/Auth hooks, optimistic conflicts and share expiry/revocation. The access browser suite uses a simulated API; it does not create a real account, send email or configure a hosted project.
+
+The older `smoke.mjs`, `tools-smoke.mjs`, `project-stories-smoke.mjs` and `cloud-publishing-smoke.mjs` were authored for earlier workspace-first root routes. Do not interpret their old route assumptions as the new access design. Team-repository tests remain independent and its deployment is unchanged by this release.
 
 ## Custom domains
 
-Choose and purchase a domain through your registrar when ready. Add it in Vercel and follow the exact DNS records Vercel provides; do not guess A/CNAME values or delete unrelated email records. Confirm ownership, HTTPS and redirects, then update public metadata. This code does not buy, reserve or verify a domain.
-
-## Project stories and the expanded profile (1.4)
-
-Open **Projects → Add project / Edit** for the five story fields, flagship switch, event name/type/venue/location/outcome, links and tools. Story fields are optional except the name. There is at most one flagship. Workflow status, next step, milestones and linked notes stay private.
-
-**Export public projects** creates `404-projects.json` (`format: "404-projects-v1"`), containing only projects marked public. Import it in the network's Project Studio. The reverse path is **Project Studio → Export for ArchiSpace**, followed by **Projects → Import project stories**. You can also import the team's `content/site.json` or an ArchiSpace `public-profile.json`. Importing is confirmed first. Existing projects match by ID, then name; their private state and public/private visibility are retained. New imported stories are public. Imports do not delete projects absent from the file. Review exports before sharing them.
-
-This is manual content exchange, not automatic synchronization. Neither site reads the other's local storage. Importing a story into ArchiSpace does not update the deployed public portfolio: export the public profile from **Portfolio → Website & hosting**, place `public-profile.json` at the repository root, then commit/redeploy. Never upload the full workspace backup.
-
-Canonical project fields: `id`, `name` (or `title` in ArchiSpace), `description`, `problemStatement`, `idealSolution`, `lessonsLearned`, `flagship`, `eventName`, `eventType`, `eventVenue`, `eventLocation`, `eventOutcome`, `context`, `tech`, `url`, `repository`, `linkLabel`, `visual`. Stable IDs are important for merging; do not change them needlessly. The shared schema module is `src/project-schema.js` in both repos. Keep its validation and interchange format in sync.
-
-Initial public facts live in `src/projects.js` and `src/profile.js`. Older browser records migrate without replacing custom descriptions, deliberately empty story fields, grades, notes or a custom bio. The exact earlier default biography updates to the expanded bio. Interests and startup aspiration are editable in **Portfolio → Edit profile**. Existing user customizations intentionally win over new defaults.
-
-### Checks
-
-- `npm test` — academics, migrations, profile, story validation, HTML escaping and privacy.
-- `npm run build:deploy` — production workspace plus public pages.
-- With ArchiSpace on port 5173 and the network on 5174: `node smoke.mjs`, `node tools-smoke.mjs`, `node project-stories-smoke.mjs`.
-- The last suite covers story editing, round-trip imports/exports, flagship switching, mobile layouts and local preview/publishing separation. Playwright Chromium must be installed for browser tests.
-
-## Shared online public stories (1.5)
-
-See **ONLINE-PUBLISHING.md** for the one-time setup shared with 404ErrorNetwork. Public viewing stays anonymous; only the team story editor requires sign-in. Load the private exact-email allowlist and activate both Auth hooks as described in the guide. Both Vercel projects must use the same `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY`. The build validates them and rejects service-role/secret keys. Without both variables the optional cloud is disabled.
-
-`/portfolio/` loads the published cloud project collection using `deploy/live/public-stories.js`. It refreshes on page load, tab focus and approximately every 30 seconds while visible. It retains bundled/last-loaded content on network failure. The profile itself remains static. The public project list is shared; it is not a merge with personal local drafts.
-
-`/#projects` links to the authenticated team Studio but retains its browser-local projects and private workflow. `/#portfolio`, downloaded exports and `/resume.html` remain snapshots. No grades, attendance or notebook records are sent to Supabase. To transfer a local public story to the team, export public projects, load the latest online revision in Studio, import/review the file and Publish. Import replaces the draft list, so preserve other shared projects before publishing.
-
-Cloud editor/browser regression: `node cloud-publishing-smoke.mjs` starts temporary test servers and mocks Supabase requests. It does not configure or verify a hosted project. The SQL permission tests live in the team repository.
+Add a purchased domain to Vercel and use the exact DNS records it gives you. Preserve unrelated email records. Verify HTTPS/redirects, then update both public metadata and the personal Auth redirect allowlist. No domain purchase, university-portal API connection, private AI service or analytics integration is performed by this application.

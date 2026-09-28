@@ -4,7 +4,7 @@
 
 ArchiSpace brings college life and creative work together in one calm, organised website. Built around **Archit Renjeev’s** journey as an Artificial Intelligence & Data Science student at **Amrita Bengaluru**, it combines academic planning, everyday progress, project ideas and a personal portfolio.
 
-The website opens into the complete college workspace, not a portfolio-only page. Calculators, notes, projects and the personal portfolio are all accessible from the same navigation.
+The website opens in **public viewer mode**: visitors can explore the public profile and projects or use independent calculators. The complete college workspace remains available only to Archit after verified owner sign-in. Visitors never receive an editable copy of his personal workspace.
 
 The goal is simple: make it easier to understand where you stand, decide what to work on next and give your ideas room to become something real.
 
@@ -48,7 +48,7 @@ The timetable keeps the original semester schedule close at hand. Grade-change h
 
 ## Your notebook
 
-A dedicated note-taking area keeps lecture notes, project thinking and personal reflections together. Notes save automatically in the current browser and can be searched, pinned, linked to courses or projects, and downloaded individually. They remain separate from the public portfolio.
+A dedicated note-taking area keeps lecture notes, project thinking and personal reflections together. Owner notes save automatically to the separate private cloud workspace and can be searched, pinned, linked to courses or projects, and downloaded individually. They remain separate from the public portfolio.
 
 ## Project dashboard
 
@@ -112,9 +112,11 @@ ArchiSpace reflects that approach: thoughtful ideas, useful systems and space to
 
 ## Privacy & personal ownership
 
-Academic records, attendance and notes are saved in the current browser rather than automatically shared online. Full workspace backups are separate from public portfolio and résumé exports.
+Academic records, attendance, private profile drafts and notes belong to the sole verified owner and are stored in a separate, access-controlled personal cloud workspace. Full private backups remain separate from public portfolio and résumé exports.
 
-Public exports include the profile and explicitly selected projects, not private academic records. The private college workspace does not provide cross-device cloud synchronisation. An optional, separately authenticated publishing service shares public project stories only.
+Private saves do not publish anything. The owner explicitly reviews and publishes the public profile, and can share individually selected items through read-only links with previews, expiry and revocation. Anyone possessing a share link can read its selected snapshot, but cannot edit it or browse other private records. Revocation cannot erase copies a recipient already saved.
+
+Public calculators use temporary inputs, not owner records. An optional, independently authenticated team publishing service shares public project stories only; teammates have no editing rights in the personal workspace.
 
 ## Room to grow
 
@@ -126,4 +128,4 @@ ArchiSpace is intended to evolve alongside its owner, with room for new subjects
 
 ## Open to readers, reserved for editors
 
-Everyone can explore the public website and project stories without an account. Choosing to edit opens a separate sign-in screen; only the five approved, verified team email identities can access the story editor. The private email list is not displayed on the site. When the optional backend is not configured, public browsing remains available and the editor stays locked.
+Everyone can explore the public website and project stories without an account. Owner sign-in opens a separate verification screen, and only Archit can unlock personal editing. The five approved teammates can separately edit shared team stories on the team website, not Archit’s private workspace. Access-control email identities are never public contact details. Without its personal backend configuration, the private workspace stays locked while the public viewer and calculators remain available.

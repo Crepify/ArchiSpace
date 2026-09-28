@@ -1,5 +1,7 @@
 # Activate shared online project stories
 
+This guide is for the **separate five-editor team-story project**, not Archit’s new sole-owner personal workspace. See **PERSONAL-SUPABASE.md** for personal authentication, private storage and read-only links. Never install the team allowlist/hooks into the personal project, or reuse its generic team variables for private storage.
+
 ## Status and scope
 
 The integration is implemented, but **it is not connected until you configure your own Supabase project**. No project, account, database, SMTP service or billing plan was created for you.
