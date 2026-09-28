@@ -1,0 +1,13 @@
+node_modules/
+dist/
+deploy/
+.cache/
+.env
+.env.*
+!.env.example
+.vercel/
+*-check.png
+*backup*.json
+*.log
+artifacts/
+.DS_Store
