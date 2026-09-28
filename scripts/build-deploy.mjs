@@ -15,7 +15,7 @@ if(process.env.PUBLIC_SITE_URL)snapshot.site.url=normalizeSiteUrl(process.env.PU
 if(process.env.PUBLIC_SITE_TITLE)snapshot.site.title=process.env.PUBLIC_SITE_TITLE;
 if(process.env.PUBLIC_SITE_DESCRIPTION)snapshot.site.description=process.env.PUBLIC_SITE_DESCRIPTION;
 await mkdir('deploy/portfolio',{recursive:true});
-const cloudConfig=resolveCloudConfig({...loadEnv('production',process.cwd(),'VITE_'),...process.env});
+const cloudConfig=resolveCloudConfig({...loadEnv('production',process.cwd(),''),...process.env});
 await build({configFile:false,define:{__STORY_CLOUD_CONFIG__:JSON.stringify(cloudConfig)},build:{lib:{entry:'src/public-stories.js',formats:['iife'],name:'ArchiSpaceLiveStories',fileName:()=> 'public-stories.js'},outDir:'deploy/live',emptyOutDir:false}});
 const portfolioHtml=renderPublicSite(snapshot,{path:'/portfolio/'}).replace('</body>','<script src="/live/public-stories.js" defer></script></body>');
 await writeFile('deploy/portfolio/index.html',portfolioHtml);
