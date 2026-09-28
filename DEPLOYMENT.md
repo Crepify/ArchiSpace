@@ -1,4 +1,4 @@
-# Archit's website: hosting & custom domain guide
+# ArchiSpace: hosting & custom domain guide
 
 ## Current status
 
@@ -40,13 +40,13 @@ If no config file is present, the build uses Archit's public defaults in `src/pr
 
 1. Create your own GitHub repository and upload the source code, **not** `node_modules`, `dist`, `deploy`, credentials or private backups.
 2. Import the repository into your Vercel account.
-3. Set the root directory to the folder containing `package.json` and `vercel.json` (for example, `verdant` if you uploaded the outer folder).
+3. Set the root directory to the folder containing `package.json` and `vercel.json` (for example, `ArchiSpace` if you uploaded the outer folder).
 4. The included `vercel.json` selects:
    - Install: `npm ci`
    - Build: `npm run build:deploy`
    - Output: `deploy`
    - Framework: no preset required for the generated public HTML
-5. Leave `VERDANT_DEPLOY_TARGET` unset or set it to `portfolio`.
+5. Leave `ARCHISPACE_DEPLOY_TARGET` unset or set it to `portfolio`.
 6. Deploy, then review the generated portfolio and `/resume.html` on Vercel's assigned project URL.
 
 You control the repository, Vercel account and permissions. No credentials should be pasted into chat or committed to source. Hosting/domain availability, provider terms and any charges must be checked when you choose to deploy.
@@ -57,7 +57,7 @@ Set these in the Vercel project's build environment. They are public configurati
 
 | Variable | Default | Purpose |
 |---|---|---|
-| `VERDANT_DEPLOY_TARGET` | `portfolio` | `portfolio` or `workspace` |
+| `ARCHISPACE_DEPLOY_TARGET` | `portfolio` | `portfolio` or `workspace` |
 | `PUBLIC_SITE_URL` | Config URL, otherwise blank | HTTPS origin used in portfolio canonical/Open Graph URL and sitemap |
 | `PUBLIC_SITE_TITLE` | Public config title | Browser/social title |
 | `PUBLIC_SITE_DESCRIPTION` | Public config description | Search/social description |
@@ -91,7 +91,7 @@ Saving a URL in the app only changes export metadata. It cannot buy the domain, 
 Import the same repository into a **second** Vercel project. Set:
 
 ```text
-VERDANT_DEPLOY_TARGET=workspace
+ARCHISPACE_DEPLOY_TARGET=workspace
 ```
 
 The same deployment command then builds the Vite app into `deploy` instead of publishing the public portfolio. Hash routes (`#grades`, `#settings`, etc.) do not require SPA path rewrites.

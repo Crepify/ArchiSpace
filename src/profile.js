@@ -11,8 +11,8 @@ export const ARCHIT_PROFILE = {
 };
 export const PROFILE_REVISION = 1;
 export const DEFAULT_SITE = {
-  title: 'Archit Renjeev',
-  description: 'Archit Renjeev — a backend-focused AI & Data Science student in Bengaluru, building clear ideas and collaborative projects. Currently learning AI model training.',
+  title: 'ArchiSpace · Archit Renjeev',
+  description: 'ArchiSpace by Archit Renjeev — a backend-focused AI & Data Science student in Bengaluru, building clear ideas and collaborative projects. Currently learning AI model training.',
   url: ''
 };
 export function normalizeSiteUrl(value) {
@@ -25,6 +25,11 @@ export function normalizeSiteUrl(value) {
 // Fills untouched defaults once. Existing marks, notes, profile edits and projects survive.
 export function migratePersonalization(data) {
   if(!data.site)data.site={...DEFAULT_SITE};
+  if(!data.brandRevision){
+    if(data.site.title==='Archit Renjeev')data.site.title=DEFAULT_SITE.title;
+    if(data.site.description==='Archit Renjeev — a backend-focused AI & Data Science student in Bengaluru, building clear ideas and collaborative projects. Currently learning AI model training.')data.site.description=DEFAULT_SITE.description;
+    data.brandRevision=1;
+  }
   if(!data.profileRevision){
     for(const [key,value] of Object.entries(ARCHIT_PROFILE)){
       if(!data.profile[key]||(key==='headline'&&data.profile[key]==='AI & Data Science student'))data.profile[key]=value;

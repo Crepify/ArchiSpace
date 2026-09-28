@@ -34,9 +34,9 @@ const rows=[
  ['I','23ENG101','Technical Communication',3,'2–0–3','Dr. Revathy Hemachandran']
 ];
 export const assessmentTemplate=()=>[['Quiz 1',10],['Quiz 2',10],['Mid-semester',50],['End-semester',30]].map(([name,max])=>({id:uid(),name,max,weight:max,score:'',date:''}));
-export function initial(){return {version:1,profileRevision:PROFILE_REVISION,profile:{...ARCHIT_PROFILE},site:{...DEFAULT_SITE},settings:{minimum:75,degreeCredits:180,target:9.5,accent:'#2d6a4f',gradePoints:{...GRADES},confirmed:false},courses:rows.map(([slot,code,name,credits,ltp,faculty])=>({id:uid(),slot,code,name,credits,ltp,faculty,semester:1,pf:slot==='G',include:slot!=='G',passPoints:5,grade:'',plan:'',attended:0,held:0,assessments:['G','H'].includes(slot)?[]:assessmentTemplate(),thresholds:{},targetMarks:85,minTotal:'',minEnd:'',notes:'',history:[]})),tasks:[],ideas:[],projects:[],features:[]};}
+export function initial(){return {version:1,brandRevision:1,profileRevision:PROFILE_REVISION,profile:{...ARCHIT_PROFILE},site:{...DEFAULT_SITE},settings:{minimum:75,degreeCredits:180,target:9.5,accent:'#2d6a4f',gradePoints:{...GRADES},confirmed:false},courses:rows.map(([slot,code,name,credits,ltp,faculty])=>({id:uid(),slot,code,name,credits,ltp,faculty,semester:1,pf:slot==='G',include:slot!=='G',passPoints:5,grade:'',plan:'',attended:0,held:0,assessments:['G','H'].includes(slot)?[]:assessmentTemplate(),thresholds:{},targetMarks:85,minTotal:'',minEnd:'',notes:'',history:[]})),tasks:[],ideas:[],projects:[],features:[]};}
 export function validate(data){
- if(!data||data.version!==1||!data.settings||!data.profile||!Array.isArray(data.courses))throw Error('Not a supported Verdant backup.');
+ if(!data||data.version!==1||!data.settings||!data.profile||!Array.isArray(data.courses))throw Error('Not a supported ArchiSpace backup.');
  const num=(v,lo,hi)=>Number.isFinite(Number(v))&&Number(v)>=lo&&Number(v)<=hi;
  if(!num(data.settings.minimum,1,100)||!num(data.settings.degreeCredits,1,1000)||!num(data.settings.target,0,10)||!/^#[0-9a-f]{6}$/i.test(data.settings.accent))throw Error('Invalid settings.');
  for(const g of Object.keys(GRADES))if(!num(data.settings.gradePoints?.[g],0,10))throw Error('Invalid grade points.');
