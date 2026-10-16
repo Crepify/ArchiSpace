@@ -13,8 +13,14 @@ const safeUrl = (s) => {
   }
 };
 
+export const PROJECT_MEDIA = {
+  civiceye: ['/projects/civiceye-1.jpg', '/projects/civiceye-2.jpg', '/projects/civiceye-3.jpg'],
+  agripulse: ['/projects/agripulse-1.jpg'],
+  metrikai: ['/projects/metrikai-1.jpg'],
+};
+export const mediaFor = (p) => PROJECT_MEDIA[p?.id] || [];
 const ROTATE_WORDS = ['Mechanical', 'Electrical', 'Software', 'AI Systems'];
-const CATS = [
+export const CATS = [
   { id: 'ai', label: 'AI SYSTEMS', short: 'AI', exploring: false, blurb: 'Artificial intelligence, data and models — the systems that learn.' },
   { id: 'software', label: 'SOFTWARE', short: 'SW', exploring: false, blurb: 'Backend, web and full-stack builds — the systems that run.' },
   { id: 'mechanical', label: 'MECHANICAL', short: 'ME', exploring: true, blurb: 'Machines, mechanisms and things that move. Currently exploring — real builds will dock here as they ship.' },
@@ -23,7 +29,7 @@ const CATS = [
 // Category is derived only from the owner's own published words (title /
 // description / tech / context). Nothing is invented: a project with no
 // matching words simply docks at SOFTWARE, and empty fields stay empty.
-function projectCat(p) {
+export function projectCat(p) {
   const text = `${p.title || ''} ${p.description || ''} ${p.tech || ''} ${p.context || ''}`.toLowerCase();
   if (/mechanical|mechanism|robot|motor|gear|machine|cad|automobile|vehicle/.test(text)) return 'mechanical';
   if (/electrical|circuit|electronic|embedded|arduino|sensor|\biot\b|hardware/.test(text)) return 'electrical';
@@ -112,9 +118,13 @@ export function panelHtmlFor(id, display) {
   }
   const proj = projects.find((x) => 'project:' + (x.id || x.title) === id);
   if (!proj) return '';
+  const media = mediaFor(proj);
+  const mediaHtml = media.length
+    ? `<img class="av-panel-img" src="${esc(media[0])}" alt="${esc(proj.title)} screenshot supplied by Archit" loading="lazy">${media.length > 1 ? `<div class="av-panel-gallery">${media.slice(1).map((m) => `<img src="${esc(m)}" alt="${esc(proj.title)} additional screenshot supplied by Archit" loading="lazy">`).join('')}</div>` : ''}`
+    : '';
   const url = safeUrl(proj.url), repo = safeUrl(proj.repository);
   const event = [proj.eventName, proj.eventType, proj.eventVenue, proj.eventLocation].filter(Boolean).join(' · ');
-  return `<p class="av-panel-kicker">${proj.flagship ? 'FLAGSHIP PROJECT' : 'PROJECT'}${proj.context ? ' · ' + esc(proj.context).toUpperCase() : ''}</p><h3>${esc(proj.title)}</h3>${
+  return `${mediaHtml}<p class="av-panel-kicker">${proj.flagship ? 'FLAGSHIP PROJECT' : 'PROJECT'}${proj.context ? ' · ' + esc(proj.context).toUpperCase() : ''}</p><h3>${esc(proj.title)}</h3>${
     event ? `<p class="av-panel-sub">${esc(event)}</p>` : ''
   }<p>${esc(proj.description || '')}</p>${proj.eventOutcome ? `<p><b>Event outcome</b><br>${esc(proj.eventOutcome)}</p>` : ''}${storyRows(proj)}${
     proj.tech ? `<p class="av-panel-tech">${esc(proj.tech)}</p>` : ''
@@ -178,12 +188,46 @@ export function renderVerseHome(display) {
       <p class="av-scroll-hint" aria-hidden="true">SCROLL · ENTERING ARCHI VERSE ↓</p>
     </section>
 
+    <section class="av-model" id="verse-model" data-step="0">
+      <div class="av-model-sticky">
+        <p class="av-eyebrow">THE VERSE MODEL · SCROLL TO INSPECT THE BUILDER</p>
+        <h2>One builder.<br><em>Every system lit.</em></h2>
+        <div class="av-model-stage">
+          <canvas id="av-model-canvas" aria-label="3D model of Archit’s builder systems: core, AI, software, mechanical and space elements"></canvas>
+          <div class="av-model-card" id="av-model-card">
+            <article class="av-step is-active"><p>01 · THE CORE</p><h3>${esc(p.name || 'Archit Renjeev')}</h3><span>${esc(p.headline || '')} Scroll, and each system lights up in turn.</span></article>
+            <article class="av-step"><p>02 · AI &amp; DATA</p><h3>Systems that learn</h3><span>AI &amp; Data Science student, currently learning AI model training. Artificial intelligence is the thread through everything here.</span></article>
+            <article class="av-step"><p>03 · SOFTWARE</p><h3>Systems that run</h3><span>Backend-focused developer. ${esc((p.skills || '').split(',').slice(0, 4).join(' · '))}</span></article>
+            <article class="av-step"><p>04 · MECHANICAL + ELECTRICAL</p><h3>Systems that move &amp; spark</h3><span>Curious about it all: software, hardware, electronics, mechanical systems, cars and bikes. These fields are marked EXPLORING in the graph — real builds will dock there as they ship.</span></article>
+            <article class="av-step"><p>05 · SPACE · PROJECTS · THE DREAM</p><h3>Systems that launch</h3><span>${esc(p.aspiration || 'One day, I want to build a startup.')} Projects in orbit: ${projects.map((x) => esc(x.title)).join(' · ') || 'coming soon'}.</span></article>
+          </div>
+        </div>
+        <p class="av-model-hint" aria-hidden="true">KEEP SCROLLING · THE MODEL GUIDES YOU ↓</p>
+      </div>
+    </section>
+
+    <section class="av-tunnel" id="tunnel">
+      <div class="av-tunnel-sticky">
+        <p class="av-eyebrow">SPACE-TIME TUNNEL · PROJECT FLYBY</p>
+        <h2>Through the <em>Archi Verse</em></h2>
+        <div class="av-tunnel-stage" id="av-tunnel-stage">
+          ${projects
+            .flatMap((x) => mediaFor(x).map((m, mi) => ({ x, m, mi })))
+            .map(
+              ({ x, m, mi }, i) => `<figure class="av-tunnel-card" data-tunnel="${i}"><img src="${esc(m)}" alt="${esc(x.title)} screenshot supplied by Archit" loading="lazy"><figcaption><b>${esc(x.title)}</b><span>${esc(x.context || (mi ? 'Gallery view' : 'Project view'))}</span></figcaption></figure>`,
+            )
+            .join('')}
+        </div>
+        <p class="av-tunnel-status">Entering Archi Verse… <span id="av-tunnel-pct">0%</span></p>
+      </div>
+    </section>
+
     <section class="av-section av-graph-section" id="projects">
       <p class="av-eyebrow">THE REACTOR GRAPH · PICK A NODE TO INSPECT IT</p>
       <h2>What do you <em>seek?</em></h2>
-      <p class="av-lede">Like a Jarvis workbench crossed with a star map: I'm the core, my fields of building orbit me, and every published project docks onto its field. Drag nodes to rearrange your view — click one to open it.</p>
+      <p class="av-lede">Like a Jarvis workbench crossed with a star map: I'm the core, my fields of building orbit me, and every published project docks onto its field. Drag to orbit the universe — click a node to open it. (On smaller screens it becomes a tap-friendly 2D map.)</p>
       <div class="av-graph-wrap">
-        <div class="av-graph-box">${graphSvg(projects)}</div>
+        <div class="av-graph-box" id="av-graph-box">${graphSvg(projects)}<div class="av-graph-ui"><button type="button" id="av-zoom-out" aria-label="Zoom out">−</button><span>DRAG TO ORBIT · CLICK NODE TO INSPECT</span><button type="button" id="av-zoom-in" aria-label="Zoom in">+</button></div></div>
         <aside class="av-panel" id="av-panel" aria-live="polite">${panelHtmlFor(flagship ? 'project:' + (flagship.id || flagship.title) : 'core', display)}</aside>
       </div>
       ${
@@ -232,11 +276,26 @@ export function renderVerseHome(display) {
       projects.length
         ? `<section class="av-section" id="project-list"><p class="av-eyebrow">SELECTED PROJECTS · INDEX</p><h2>Project index.</h2><div class="av-cards">${projects
             .map(
-              (x) => `<article class="av-card">${x.flagship ? '<span class="av-flag">FLAGSHIP PROJECT</span>' : ''}<h3>${esc(x.title)}</h3><p>${esc(x.description || '')}</p>${x.context ? `<p class="av-card-ctx">${esc(x.context)}</p>` : ''}<button type="button" class="av-card-btn" data-select="project:${esc(x.id || x.title)}">Inspect in graph ↑</button>${safeUrl(x.url) ? `<a href="${esc(safeUrl(x.url))}" target="_blank" rel="noopener">${esc(x.linkLabel || 'View project')} ↗</a>` : ''}</article>`,
+              (x) => `<article class="av-card">${mediaFor(x).length ? `<div class="av-cover av-cover-img"><img src="${esc(mediaFor(x)[0])}" alt="${esc(x.title)} screenshot supplied by Archit" loading="lazy"></div>` : `<div class="av-cover" aria-hidden="true"><span>PROJECT VISUAL</span><small>PLACEHOLDER · Screenshot to be added by Archit</small></div>`}${x.flagship ? '<span class="av-flag">FLAGSHIP PROJECT</span>' : ''}<h3>${esc(x.title)}</h3><p>${esc(x.description || '')}</p>${x.context ? `<p class="av-card-ctx">${esc(x.context)}</p>` : ''}<button type="button" class="av-card-btn" data-select="project:${esc(x.id || x.title)}">Inspect in graph ↑</button>${safeUrl(x.url) ? `<a href="${esc(safeUrl(x.url))}" target="_blank" rel="noopener">${esc(x.linkLabel || 'View project')} ↗</a>` : ''}</article>`,
             )
             .join('')}</div></section>`
         : ''
     }
+    <section class="av-section" id="flight-log">
+      <p class="av-eyebrow">FLIGHT LOG · HACKATHONS & CERTIFICATES</p>
+      <h2>Where the verse has <em>already flown.</em></h2>
+      <div class="av-cards">
+        ${[...new Map(projects.filter((x) => x.eventName).map((x) => [x.eventName, x])).values()]
+          .map(
+            (x) => `<article class="av-card"><span class="av-flag">HACKATHON</span><h3>${esc(x.eventName)}</h3><p>${esc([x.eventType, x.eventVenue, x.eventLocation].filter(Boolean).join(' · '))}</p>${x.eventOutcome ? `<p><b>Outcome</b><br>${esc(x.eventOutcome)}</p>` : ''}<p class="av-card-ctx">via ${esc(x.title)} · Photos &amp; certificate: to be added by Archit (placeholder)</p></article>`,
+          )
+          .join('')}
+        <article class="av-card av-placeholder"><span class="av-flag">CERTIFICATE · PLACEHOLDER</span><h3>Certificate title</h3><p>Issuer · Year · Credential link</p><p class="av-card-ctx">Placeholder — Archit will add real certificates here. Nothing is claimed yet.</p></article>
+        <article class="av-card av-placeholder"><span class="av-flag">CERTIFICATE · PLACEHOLDER</span><h3>Certificate title</h3><p>Issuer · Year · Credential link</p><p class="av-card-ctx">Placeholder — Archit will add real certificates here. Nothing is claimed yet.</p></article>
+        <article class="av-card av-placeholder"><span class="av-flag">NEXT FLIGHT · PLACEHOLDER</span><h3>Future hackathon</h3><p>Event · Venue · Date</p><p class="av-card-ctx">Placeholder — upcoming journeys land here.</p></article>
+      </div>
+    </section>
+
     ${p.experience ? `<section class="av-section"><p class="av-eyebrow">ALONG THE WAY</p><h2>Experience &amp; achievements.</h2><p class="av-body">${esc(p.experience)}</p></section>` : ''}
   </main>
 
@@ -422,6 +481,95 @@ export function initVerse(display) {
     });
   }
 
+  // Verse Model: scroll drives the active step (sticky pinned section).
+  const modelSection = root.querySelector('#verse-model');
+  const stepEls = [...root.querySelectorAll('.av-step')];
+  if (modelSection && stepEls.length) {
+    const onScroll = () => {
+      const r = modelSection.getBoundingClientRect();
+      const total = Math.max(1, modelSection.offsetHeight - innerHeight);
+      const prog = Math.min(1, Math.max(0, -r.top / total));
+      const idx = Math.min(stepEls.length - 1, Math.floor(prog * stepEls.length));
+      modelSection.dataset.step = String(idx);
+      stepEls.forEach((el, i) => el.classList.toggle('is-active', i === idx));
+    };
+    onScroll();
+    addEventListener('scroll', onScroll, { passive: true });
+    cleanup.push(() => removeEventListener('scroll', onScroll));
+  }
+
+  // 3D layer (desktop-full only). Mobile-lite keeps the 2D graph + stacked steps.
+  if (matchMedia('(min-width: 900px)').matches && !reduced) {
+    import('./verse3d.js')
+      .then((m) => {
+        if (!document.body.contains(root)) return;
+        const box = root.querySelector('#av-graph-box');
+        const svgEl = root.querySelector('#av-graph');
+        let graph3d = null;
+        if (box && svgEl) {
+          graph3d = m.initGraph3D({
+            box,
+            display,
+            onSelect: (id) => root._avSelect?.(id),
+          });
+          if (graph3d) {
+            box.classList.add('av-3d-on');
+            const zin = root.querySelector('#av-zoom-in'), zout = root.querySelector('#av-zoom-out');
+            zin?.addEventListener('click', () => graph3d.setZoom(graph3d.getZoom() - 1.2));
+            zout?.addEventListener('click', () => graph3d.setZoom(graph3d.getZoom() + 1.2));
+            cleanup.push(() => graph3d?.destroy());
+          }
+        }
+        const mCanvas = root.querySelector('#av-model-canvas');
+        if (mCanvas && modelSection) {
+          const model3d = m.initModel3D({ canvas: mCanvas, section: modelSection, display });
+          if (model3d) cleanup.push(() => model3d.destroy());
+        }
+      })
+      .catch(() => {}); // 2D fallback silently remains
+  }
+
+  // Space-time tunnel: cards fly past as you scroll the pinned section.
+  const tunnel = root.querySelector('#tunnel');
+  const tunnelCards = [...root.querySelectorAll('.av-tunnel-card')];
+  const tunnelPct = root.querySelector('#av-tunnel-pct');
+  if (tunnel && tunnelCards.length && matchMedia('(min-width: 900px)').matches && !reduced) {
+    let ticking = false;
+    const drive = () => {
+      ticking = false;
+      const total = Math.max(1, tunnel.offsetHeight - innerHeight);
+      const prog = Math.min(1, Math.max(0, -tunnel.getBoundingClientRect().top / total));
+      if (tunnelPct) tunnelPct.textContent = Math.round(prog * 100) + '%';
+      tunnelCards.forEach((card, i) => {
+        const local = prog * tunnelCards.length - i; // 0 = front & centre
+        const a = Math.abs(local);
+        if (a > 1.15) {
+          card.style.opacity = '0';
+          card.style.visibility = 'hidden';
+          return;
+        }
+        const side = i % 2 === 0 ? -1 : 1;
+        const x = side * (local < 0 ? -local * innerWidth * 0.22 : local * innerWidth * 0.08);
+        const y = local * -70;
+        const scale = local < 0 ? 1 - a * 0.38 : 1 + local * 0.55;
+        const op = 1 - Math.max(0, a - 0.55) / 0.6;
+        card.style.visibility = 'visible';
+        card.style.opacity = String(Math.max(0, Math.min(1, op)));
+        card.style.transform = `translate(-50%,-50%) translate(${x}px,${y}px) scale(${scale}) rotateY(${side * local * -7}deg)`;
+        card.style.zIndex = String(100 - Math.round(a * 10));
+      });
+    };
+    const onScrollTunnel = () => {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(drive);
+      }
+    };
+    drive();
+    addEventListener('scroll', onScrollTunnel, { passive: true });
+    cleanup.push(() => removeEventListener('scroll', onScrollTunnel));
+  }
+
   // Reactor graph: selection + dragging
   const svg = root.querySelector('#av-graph');
   const panel = root.querySelector('#av-panel');
@@ -491,5 +639,6 @@ export function initVerse(display) {
     });
     const flagship = display.projects.find((x) => x.flagship) || display.projects[0];
     select(flagship ? 'project:' + (flagship.id || flagship.title) : 'core');
+    root._avSelect = select;
   }
 }

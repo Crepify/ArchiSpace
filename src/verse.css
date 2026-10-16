@@ -188,3 +188,73 @@
   .av *,#av-stars{animation:none!important;transition:none!important}
   .av-reveal span{opacity:1}
 }
+
+/* ---- Verse Model (Solais-style pinned scroll) ---- */
+html{scroll-behavior:smooth}
+.av-model{position:relative;height:340vh;border-top:1px solid var(--av-line)}
+.av-model-sticky{position:sticky;top:0;min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:96px 28px 40px;max-width:1180px;margin:auto;overflow:hidden}
+.av-model-stage{position:relative;flex:1;min-height:420px}
+#av-model-canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.av-model-card{position:absolute;right:0;bottom:6%;width:min(390px,88vw);min-height:190px;pointer-events:none}
+.av-step{position:absolute;inset:0;opacity:0;transform:translateY(14px);transition:opacity .55s,transform .55s;border:1px solid var(--av-line);border-radius:18px;padding:24px;background:var(--av-panel);backdrop-filter:blur(8px)}
+.av-step.is-active{opacity:1;transform:none}
+.av-step p{font-family:var(--av-mono);font-size:10px;letter-spacing:2.4px;color:var(--av-cyan);margin:0 0 10px}
+.av-step h3{font-size:24px;margin:0 0 8px;letter-spacing:-.4px}
+.av-step span{color:var(--av-muted);font-size:13.5px}
+.av-model-hint{font-family:var(--av-mono);font-size:10px;letter-spacing:3px;color:#5c7266;text-align:center;margin:16px 0 0;animation:av-pulse 2.6s infinite}
+
+/* ---- 3D graph layer ---- */
+.av-graph-box{position:relative}
+.av-graph3d-canvas{position:absolute;inset:0;width:100%;height:100%;display:none;touch-action:none;cursor:grab}
+.av-3d-on .av-graph3d-canvas{display:block}
+.av-3d-on #av-graph{visibility:hidden}
+.av-graph-ui{position:absolute;left:12px;right:12px;bottom:10px;display:none;align-items:center;justify-content:space-between;gap:10px;z-index:3;pointer-events:none}
+.av-3d-on .av-graph-ui{display:flex}
+.av-graph-ui span{font-family:var(--av-mono);font-size:9px;letter-spacing:2px;color:var(--av-muted)}
+.av-graph-ui button{pointer-events:auto;width:34px;height:34px;border-radius:50%;border:1px solid var(--av-line);background:rgba(5,12,9,.85);color:var(--av-green);font-size:17px;cursor:pointer}
+.av-graph-ui button:hover{border-color:var(--av-cyan);color:var(--av-cyan)}
+
+/* ---- Placeholder covers / flight log ---- */
+.av-cover{border:1px dashed rgba(56,225,255,.35);border-radius:12px;padding:22px 16px;text-align:center;margin-bottom:16px;background:radial-gradient(300px 120px at 50% 0%,rgba(45,255,143,.10),transparent 70%)}
+.av-cover span{display:block;font-family:var(--av-mono);font-size:11px;letter-spacing:2.6px;color:var(--av-cyan)}
+.av-cover small{font-family:var(--av-mono);font-size:9px;letter-spacing:1.4px;color:var(--av-muted)}
+.av-placeholder{border-style:dashed;opacity:.92}
+
+@media (max-width:899px){
+  /* Mobile-lite: no pinning, no 3D canvas — steps stack and stay readable */
+  .av-model{height:auto}
+  .av-model-sticky{position:static;min-height:0;padding:48px 18px 10px}
+  .av-model-stage{min-height:0}
+  #av-model-canvas{display:none}
+  .av-model-card{position:static;width:auto;min-height:0;display:grid;gap:12px;pointer-events:auto}
+  .av-step{position:static;opacity:1;transform:none}
+  .av-model-hint{display:none}
+}
+
+/* ---- Project media ---- */
+.av-cover-img{padding:0;overflow:hidden;border-style:solid}
+.av-cover-img img{width:100%;height:190px;object-fit:cover;object-position:top center;display:block}
+.av-panel-img{width:100%;border-radius:12px;border:1px solid var(--av-line);display:block;margin-bottom:16px}
+.av-panel-gallery{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:-6px 0 16px}
+.av-panel-gallery img{width:100%;height:92px;object-fit:cover;object-position:top center;border-radius:9px;border:1px solid var(--av-line);display:block}
+
+/* ---- Space-time tunnel ---- */
+.av-tunnel{position:relative;height:340vh;border-top:1px solid var(--av-line)}
+.av-tunnel-sticky{position:sticky;top:0;height:100vh;overflow:hidden;display:flex;flex-direction:column;align-items:center;padding:104px 20px 30px;
+  background:radial-gradient(700px 380px at 50% 55%, rgba(45,255,143,.08), transparent 65%)}
+.av-tunnel-sticky h2{font-size:clamp(28px,4vw,44px);margin:0}
+.av-tunnel-stage{position:relative;flex:1;width:100%;perspective:950px}
+.av-tunnel-card{position:absolute;left:50%;top:52%;width:min(600px,54vw);margin:0;transform:translate(-50%,-50%);
+  border:1px solid rgba(94,255,178,.30);border-radius:16px;overflow:hidden;background:#060d0a;
+  box-shadow:0 30px 80px rgba(0,0,0,.55),0 0 42px rgba(45,255,143,.10);will-change:transform,opacity}
+.av-tunnel-card img{width:100%;height:auto;display:block}
+.av-tunnel-card figcaption{display:flex;justify-content:space-between;gap:14px;padding:12px 16px;font-family:var(--av-mono);font-size:11px;letter-spacing:1px}
+.av-tunnel-card figcaption span{color:var(--av-muted);text-align:right}
+.av-tunnel-status{font-family:var(--av-mono);font-size:11px;letter-spacing:2.6px;color:var(--av-green);text-transform:uppercase;margin:10px 0 0}
+.av-tunnel-status span{color:var(--av-cyan)}
+@media (max-width:899px){
+  .av-tunnel{height:auto}
+  .av-tunnel-sticky{position:static;height:auto;padding:52px 18px 34px}
+  .av-tunnel-stage{display:grid;gap:16px;margin-top:22px}
+  .av-tunnel-card{position:static;width:100%;transform:none!important;opacity:1!important;visibility:visible!important}
+}

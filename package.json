@@ -12,7 +12,7 @@
   "keywords": [],
   "author": "Archit Renjeev",
   "license": "ISC",
-  "description": "ArchiSpace \u2014 Archit Renjeev\u2019s personal academic workspace and portfolio",
+  "description": "ArchiSpace — Archit Renjeev’s personal academic workspace and portfolio",
   "devDependencies": {
     "@electric-sql/pglite": "^0.5.8",
     "@playwright/test": "^1.63.0",
@@ -20,6 +20,7 @@
   },
   "type": "module",
   "dependencies": {
-    "@supabase/supabase-js": "^2.109.0"
+    "@supabase/supabase-js": "^2.109.0",
+    "three": "^0.180.0"
   }
 }
