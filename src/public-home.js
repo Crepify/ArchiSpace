@@ -1,8 +1,10 @@
 import { ARCHIT_PROFILE, DEFAULT_SITE } from './profile.js';
 import { TEAM_PROJECTS } from './projects.js';
-import { publicSnapshot, renderPublicSite } from './public-site.js';
+import { publicSnapshot } from './public-site.js';
 import { watchPublicStories } from './cloud-public.js';
 import { personalConfig, publicPersonalRpc } from './personal-config.js';
+import { renderVerseHome, initVerse, destroyVerse } from './verse-home.js';
+import './verse.css';
 const fragment = location.hash.slice(1);
 const toolRoutes = ['grades', 'attendance', 'assessments', 'planner'];
 const ownerRoutes = ['overview', 'courses', 'notes', 'ideas', 'portfolio', 'settings', 'timetable'];
@@ -22,31 +24,12 @@ function startViewer() {
     const display = teamProjects
       ? { ...snapshot, projects: teamProjects.map((p) => ({ ...p, title: p.name, public: true })) }
       : snapshot;
-    const doc = new DOMParser().parseFromString(renderPublicSite(display), 'text/html');
-    let style = document.querySelector('#viewer-style');
-    if (!style) {
-      style = document.createElement('style');
-      style.id = 'viewer-style';
-      document.head.append(style);
-    }
-    style.textContent =
-      doc.querySelector('style').textContent +
-      '\n.viewer-banner{background:#edf4e5;border:1px solid #d7e3cc;border-radius:8px;padding:16px 20px;margin-top:25px;font-size:12px;line-height:1.8;color:#647e55}.viewer-banner a{margin-left:16px;white-space:nowrap}.viewer-cloud-status{font-size:10px;line-height:1.8;margin:12px 0}';
-    root.innerHTML = doc.body.innerHTML;
+    destroyVerse();
+    root.innerHTML = renderVerseHome(display);
     document.title = display.site.title;
-    const nav = root.querySelector('header nav');
-    nav.innerHTML =
-      '<a href="/tools.html">Public calculators ↗</a><a href="#about">About</a><a href="#projects">Projects</a><a href="/owner.html">Owner sign-in</a>';
-    const banner = document.createElement('div');
-    banner.className = 'viewer-banner';
-    banner.innerHTML =
-      '<b>VIEWER MODE</b> · Public profile and selected projects only. Private notes, marks and records are not loaded.<a href="/tools.html">Use public tools →</a>';
-    root.querySelector('main').prepend(banner);
-    const status = document.createElement('p');
-    status.className = 'viewer-cloud-status';
-    status.id = 'personal-public-status';
-    status.textContent = personalStatus;
-    root.querySelector('footer').append(status);
+    initVerse(display);
+    const el = document.querySelector('#personal-public-status');
+    if (el) el.textContent = personalStatus;
   }
   render();
   watchPublicStories({
@@ -62,9 +45,9 @@ function startViewer() {
         el = document.createElement('p');
         el.id = 'team-public-status';
         el.className = 'viewer-cloud-status';
-        root.querySelector('footer').append(el);
+        root.querySelector('footer')?.append(el);
       }
-      el.textContent = message;
+      if (el) el.textContent = message;
     },
   });
   async function refresh() {
