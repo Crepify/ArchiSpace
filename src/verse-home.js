@@ -550,15 +550,15 @@ export function initVerse(display) {
     const capFill = root.querySelector('#av-tunnel-fill');
     const mix = (a, b, t) => a + (b - a) * t;
     // Keyframe stops over local phase L (0 = docked front). side mirrors x/rot.
-    // Docked plateau between -0.20 and +0.30: the card sits fully visible,
-    // angled on its side, and is fully gone by +0.55 before the next grows.
-    const STOPS = [-1, -0.55, -0.2, 0.3, 0.55, 1];
+    // Long docked plateau between -0.25 and +0.55: each screenshot stays
+    // fully visible for a good stretch of scroll before exiting by +0.85.
+    const STOPS = [-1, -0.6, -0.25, 0.55, 0.85, 1];
     const POSE = {
-      x: [0, 0.03, 0.14, 0.16, 0.205, 0.25], // fraction of viewport width, x side
-      y: [20, 8, 0, 0, -20, -55], // px
-      scale: [0.35, 0.55, 0.92, 1, 1.12, 1.30],
+      x: [0, 0.03, 0.135, 0.165, 0.215, 0.25], // fraction of viewport width, x side
+      y: [20, 8, 0, 0, -24, -55], // px
+      scale: [0.35, 0.55, 0.92, 1, 1.14, 1.30],
       opacity: [0, 0.25, 1, 1, 0, 0],
-      rot: [0, 4, 13, 16, 21, 26], // deg, x -side
+      rot: [0, 4, 13, 16, 22, 26], // deg, x -side
     };
     const poseAt = (L, side) => {
       let k = 0;

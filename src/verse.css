@@ -239,7 +239,7 @@ html{scroll-behavior:smooth}
 .av-panel-gallery img{width:100%;height:92px;object-fit:cover;object-position:top center;border-radius:9px;border:1px solid var(--av-line);display:block}
 
 /* ---- Space-time tunnel ---- */
-.av-tunnel{position:relative;height:340vh;border-top:1px solid var(--av-line)}
+.av-tunnel{position:relative;height:500vh;border-top:1px solid var(--av-line)}
 .av-tunnel-sticky{position:sticky;top:0;height:100vh;overflow:hidden;display:flex;flex-direction:column;align-items:center;padding:104px 20px 30px;
   background:radial-gradient(700px 380px at 50% 55%, rgba(45,255,143,.08), transparent 65%)}
 .av-tunnel-sticky h2{font-size:clamp(28px,4vw,44px);margin:0}
