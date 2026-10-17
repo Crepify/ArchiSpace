@@ -208,17 +208,25 @@ export function renderVerseHome(display) {
 
     <section class="av-tunnel" id="tunnel">
       <div class="av-tunnel-sticky">
+        <canvas id="av-tunnel-canvas" aria-hidden="true"></canvas>
+        <div class="av-tunnel-ring" aria-hidden="true"></div>
         <p class="av-eyebrow">SPACE-TIME TUNNEL · PROJECT FLYBY</p>
         <h2>Through the <em>Archi Verse</em></h2>
         <div class="av-tunnel-stage" id="av-tunnel-stage">
           ${projects
             .flatMap((x) => mediaFor(x).map((m, mi) => ({ x, m, mi })))
             .map(
-              ({ x, m, mi }, i) => `<figure class="av-tunnel-card" data-tunnel="${i}"><img src="${esc(m)}" alt="${esc(x.title)} screenshot supplied by Archit" loading="lazy"><figcaption><b>${esc(x.title)}</b><span>${esc(x.context || (mi ? 'Gallery view' : 'Project view'))}</span></figcaption></figure>`,
+              ({ x, m, mi }, i) => `<figure class="av-tunnel-card" data-tunnel="${i}" data-title="${esc(x.title)}" data-context="${esc(x.context || (mi ? 'Gallery view' : 'Project view'))}"><img src="${esc(m)}" alt="${esc(x.title)} screenshot supplied by Archit" loading="lazy"><figcaption><b>${esc(x.title)}</b><span>${esc(x.context || (mi ? 'Gallery view' : 'Project view'))}</span></figcaption></figure>`,
             )
             .join('')}
         </div>
-        <p class="av-tunnel-status">Entering Archi Verse… <span id="av-tunnel-pct">0%</span></p>
+        <div class="av-tunnel-hud">
+          <p class="av-tunnel-count"><span id="av-tunnel-count">01</span> / ${String(projects.flatMap((x) => mediaFor(x)).length).padStart(2, '0')}</p>
+          <h3 id="av-tunnel-title"></h3>
+          <p id="av-tunnel-context"></p>
+          <div class="av-tunnel-bar"><i id="av-tunnel-fill"></i></div>
+          <p class="av-tunnel-status">Entering Archi Verse… <span id="av-tunnel-pct">0%</span></p>
+        </div>
       </div>
     </section>
 
@@ -529,35 +537,123 @@ export function initVerse(display) {
       .catch(() => {}); // 2D fallback silently remains
   }
 
-  // Space-time tunnel: cards fly past as you scroll the pinned section.
+  // Space-time tunnel: one screenshot at a time travels from deep centre,
+  // docks angled on alternating sides, then exits past the camera. A 2D canvas
+  // streams stars outward; scroll velocity feeds the warp speed.
   const tunnel = root.querySelector('#tunnel');
   const tunnelCards = [...root.querySelectorAll('.av-tunnel-card')];
   const tunnelPct = root.querySelector('#av-tunnel-pct');
   if (tunnel && tunnelCards.length && matchMedia('(min-width: 900px)').matches && !reduced) {
+    const capTitle = root.querySelector('#av-tunnel-title');
+    const capContext = root.querySelector('#av-tunnel-context');
+    const capCount = root.querySelector('#av-tunnel-count');
+    const capFill = root.querySelector('#av-tunnel-fill');
+    const mix = (a, b, t) => a + (b - a) * t;
+    // Keyframe stops over local phase L (0 = docked front). side mirrors x/rot.
+    // Docked plateau between -0.20 and +0.30: the card sits fully visible,
+    // angled on its side, and is fully gone by +0.55 before the next grows.
+    const STOPS = [-1, -0.55, -0.2, 0.3, 0.55, 1];
+    const POSE = {
+      x: [0, 0.03, 0.14, 0.16, 0.205, 0.25], // fraction of viewport width, x side
+      y: [20, 8, 0, 0, -20, -55], // px
+      scale: [0.35, 0.55, 0.92, 1, 1.12, 1.30],
+      opacity: [0, 0.25, 1, 1, 0, 0],
+      rot: [0, 4, 13, 16, 21, 26], // deg, x -side
+    };
+    const poseAt = (L, side) => {
+      let k = 0;
+      while (k < STOPS.length - 2 && L > STOPS[k + 1]) k++;
+      const t = Math.min(1, Math.max(0, (L - STOPS[k]) / (STOPS[k + 1] - STOPS[k])));
+      return {
+        x: side * mix(POSE.x[k], POSE.x[k + 1], t) * innerWidth,
+        y: mix(POSE.y[k], POSE.y[k + 1], t),
+        scale: mix(POSE.scale[k], POSE.scale[k + 1], t),
+        opacity: mix(POSE.opacity[k], POSE.opacity[k + 1], t),
+        rot: -side * mix(POSE.rot[k], POSE.rot[k + 1], t),
+      };
+    };
+    let lastProg = 0, warp = 0;
+    const starsCanvas = root.querySelector('#av-tunnel-canvas');
+    const sctx = starsCanvas?.getContext('2d');
+    let starList = [], tunnelVisible = false, starRaf = 0;
+    const sizeStars = () => {
+      if (!starsCanvas) return;
+      starsCanvas.width = tunnel.clientWidth;
+      starsCanvas.height = innerHeight;
+      starList = Array.from({ length: 170 }, () => ({
+        a: Math.random() * Math.PI * 2,
+        d: 0.04 + Math.random() * 0.96,
+        s: 0.6 + Math.random() * 1.4,
+        cyan: Math.random() > 0.7,
+      }));
+    };
+    const drawStars = () => {
+      if (tunnelVisible && sctx && document.visibilityState === 'visible') {
+        const w = starsCanvas.width, h = starsCanvas.height, cx = w / 2, cy = h / 2, maxR = Math.hypot(cx, cy);
+        sctx.clearRect(0, 0, w, h);
+        warp *= 0.94;
+        for (const st of starList) {
+          let prev = st.d;
+          st.d += Math.min(0.022, (0.0016 + warp * 0.05) * st.s * (0.35 + st.d));
+          if (st.d > 1) {
+            st.d = 0.03;
+            st.a = Math.random() * Math.PI * 2;
+            prev = st.d; // wrapped: never draw a slash across the screen
+          }
+          const r1 = prev * maxR, r2 = st.d * maxR;
+          sctx.beginPath();
+          sctx.moveTo(cx + Math.cos(st.a) * r1, cy + Math.sin(st.a) * r1);
+          sctx.lineTo(cx + Math.cos(st.a) * r2, cy + Math.sin(st.a) * r2);
+          sctx.strokeStyle = st.cyan ? 'rgba(56,225,255,.75)' : 'rgba(190,255,215,.65)';
+          sctx.lineWidth = 1 + st.d * 1.6;
+          sctx.stroke();
+        }
+      }
+      starRaf = requestAnimationFrame(drawStars);
+    };
+    if (starsCanvas) {
+      sizeStars();
+      drawStars();
+      const ro = new ResizeObserver(sizeStars);
+      ro.observe(tunnel);
+      const io = new IntersectionObserver((es) => (tunnelVisible = es.some((e) => e.isIntersecting)));
+      io.observe(tunnel);
+      cleanup.push(() => {
+        cancelAnimationFrame(starRaf);
+        ro.disconnect();
+        io.disconnect();
+      });
+    }
     let ticking = false;
     const drive = () => {
       ticking = false;
       const total = Math.max(1, tunnel.offsetHeight - innerHeight);
       const prog = Math.min(1, Math.max(0, -tunnel.getBoundingClientRect().top / total));
+      warp = Math.min(1, warp + Math.abs(prog - lastProg) * 6);
+      lastProg = prog;
       if (tunnelPct) tunnelPct.textContent = Math.round(prog * 100) + '%';
+      if (capFill) capFill.style.width = prog * 100 + '%';
       tunnelCards.forEach((card, i) => {
-        const local = prog * tunnelCards.length - i; // 0 = front & centre
-        const a = Math.abs(local);
-        if (a > 1.15) {
+        const local = prog * (tunnelCards.length - 0.3) - i;
+        if (local < -1.05 || local > 1.05) {
           card.style.opacity = '0';
           card.style.visibility = 'hidden';
           return;
         }
         const side = i % 2 === 0 ? -1 : 1;
-        const x = side * (local < 0 ? -local * innerWidth * 0.22 : local * innerWidth * 0.08);
-        const y = local * -70;
-        const scale = local < 0 ? 1 - a * 0.38 : 1 + local * 0.55;
-        const op = 1 - Math.max(0, a - 0.55) / 0.6;
+        const pose = poseAt(Math.max(-1, Math.min(1, local)), side);
         card.style.visibility = 'visible';
-        card.style.opacity = String(Math.max(0, Math.min(1, op)));
-        card.style.transform = `translate(-50%,-50%) translate(${x}px,${y}px) scale(${scale}) rotateY(${side * local * -7}deg)`;
-        card.style.zIndex = String(100 - Math.round(a * 10));
+        card.style.opacity = String(Math.max(0, Math.min(1, pose.opacity)));
+        card.style.transform = `translate(-50%,-50%) translate(${pose.x}px,${pose.y}px) scale(${pose.scale}) rotateY(${pose.rot}deg)`;
+        card.style.zIndex = String(100 - Math.round(Math.abs(local) * 10));
+        card.style.filter = `brightness(${1 - Math.min(0.45, Math.abs(local) * 0.5)})`;
       });
+      const active = tunnelCards[Math.max(0, Math.min(tunnelCards.length - 1, Math.round(prog * (tunnelCards.length - 0.3))))];
+      if (active && capTitle) {
+        capTitle.textContent = active.dataset.title || '';
+        if (capContext) capContext.textContent = active.dataset.context || '';
+        if (capCount) capCount.textContent = String(tunnelCards.indexOf(active) + 1).padStart(2, '0');
+      }
     };
     const onScrollTunnel = () => {
       if (!ticking) {
