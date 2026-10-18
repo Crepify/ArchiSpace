@@ -508,3 +508,77 @@ details[open] summary {
     padding: 5px 12px;
   }
 }
+
+/* ============================================================
+   ARCHIVERSE THEME (Phase 2) — tools · share · owner gate
+   Same universe as the public homepage: reactor green + cyan
+   on black/graphite, glass panels, calm readable workspace.
+   ============================================================ */
+:root{color-scheme:dark;color:#eef7f0;background:#04070a}
+html{scroll-behavior:smooth}
+body{background:
+  radial-gradient(900px 480px at 85% -5%, rgba(56,225,255,.08), transparent 60%),
+  radial-gradient(1000px 600px at 8% 10%, rgba(45,255,143,.07), transparent 55%),
+  linear-gradient(180deg,#04070a,#060d0a 55%,#03060a);
+  color:#eef7f0;min-height:100vh}
+::selection{background:rgba(45,255,143,.35)}
+.access-nav{border-bottom:1px solid rgba(94,255,178,.16);background:rgba(4,8,7,.72);backdrop-filter:blur(10px)}
+.access-nav>a{font-family:ui-monospace,Consolas,monospace;font-weight:700;letter-spacing:2.5px;font-size:19px;text-transform:uppercase}
+.access-nav>a span{color:#2dff8f}
+.access-nav nav a{font-family:ui-monospace,Consolas,monospace;font-size:11px;letter-spacing:1.2px;text-transform:uppercase;color:#c4d8ca;text-decoration:none}
+.access-nav nav a:hover{color:#38e1ff}
+.mode-tag{color:#2dff8f;font-family:ui-monospace,Consolas,monospace;letter-spacing:2.4px}
+.access-shell h1{font-family:system-ui,-apple-system,sans-serif;font-weight:800;letter-spacing:-1.6px;color:#f4fbf5}
+.access-shell h2{font-family:system-ui,-apple-system,sans-serif;font-weight:750;letter-spacing:-.6px;color:#eef7f0}
+.access-shell h3{font-family:system-ui,-apple-system,sans-serif;color:#eef7f0}
+.access-lead{color:#93aa9c}
+.access-card{background:rgba(9,19,14,.78);border:1px solid rgba(94,255,178,.18);border-radius:18px;
+  box-shadow:0 24px 60px rgba(0,0,0,.38);backdrop-filter:blur(8px);transition:border-color .3s,transform .3s}
+.access-card:hover{border-color:rgba(56,225,255,.38)}
+.access-card>p{color:#9db4a6}
+.access-card label{color:#9fe8bb;font-family:ui-monospace,Consolas,monospace;font-size:10.5px;letter-spacing:.6px}
+.access-card input,.access-card select,.access-card textarea{
+  background:#050c08;border:1px solid rgba(94,255,178,.22);border-radius:10px;color:#eef7f0}
+.access-card input:focus,.access-card select:focus,.access-card textarea:focus{
+  border-color:#2dff8f;box-shadow:0 0 0 3px rgba(45,255,143,.16);outline:none}
+.access-card option{background:#0a140f;color:#eef7f0}
+.access-card input[type='checkbox']{accent-color:#2dff8f}
+button{background:rgba(10,22,16,.65);border:1px solid rgba(94,255,178,.28);border-radius:99px;color:#eef7f0;transition:.25s}
+button:hover{border-color:#38e1ff;color:#38e1ff;transform:translateY(-1px)}
+button.primary,.access-button.primary{background:#2dff8f;border-color:#2dff8f;color:#03130a;font-weight:700;box-shadow:0 0 24px rgba(45,255,143,.30)}
+button.primary:hover,.access-button.primary:hover{background:#38e1ff;border-color:#38e1ff;color:#02141c}
+.access-button{border-color:rgba(94,255,178,.28);border-radius:99px;color:#eef7f0}
+.access-button:hover{border-color:#2dff8f;color:#2dff8f}
+.tool-tabs a{border:1px solid rgba(94,255,178,.20);border-radius:99px;padding:10px 17px;text-decoration:none;
+  font-family:ui-monospace,Consolas,monospace;font-size:11px;letter-spacing:1px;text-transform:uppercase;background:rgba(9,19,14,.6);transition:.25s}
+.tool-tabs a:hover{border-color:#2dff8f;color:#2dff8f;transform:translateY(-2px);box-shadow:0 12px 26px rgba(0,0,0,.35)}
+.result-panel{background:linear-gradient(120deg,rgba(45,255,143,.13),rgba(56,225,255,.09));
+  border:1px solid rgba(45,255,143,.35);border-radius:14px;color:#d9ffe9;box-shadow:0 0 34px rgba(45,255,143,.10) inset}
+details summary{color:#38e1ff}
+details p{color:#9db4a6}
+.access-status{color:#2dff8f}
+.access-error{color:#ff8296}
+.access-fine{color:#71867a}
+.share-item{border-bottom:1px solid rgba(94,255,178,.16)}
+.share-body{color:#b9cdc0}
+.share-choices{border-color:rgba(94,255,178,.20)}
+.share-choice{border-bottom:1px solid rgba(94,255,178,.12)}
+.share-preview{border-color:rgba(94,255,178,.20);background:rgba(6,13,10,.85)}
+.share-link{background:#050c08;border-color:rgba(45,255,143,.4);color:#8ff5c0}
+.owner-toolbar{background:rgba(4,9,7,.92);border-bottom:1px solid rgba(94,255,178,.22);color:#e6f5ea;backdrop-filter:blur(10px)}
+.owner-toolbar button,.owner-toolbar a{border-color:rgba(94,255,178,.35);color:#e6f5ea}
+.owner-toolbar button.primary{background:#2dff8f;color:#03130a;border-color:#2dff8f}
+.owner-toolbar small{color:#7d9687}
+.owner-dialog{background:#071009;color:#eef7f0;border-color:rgba(94,255,178,.30);border-radius:18px}
+.owner-dialog::backdrop{background:rgba(1,4,3,.78)}
+.owner-dialog h2{font-family:system-ui,-apple-system,sans-serif;font-weight:750}
+.share-history{border-top-color:rgba(94,255,178,.18)}
+.share-history article{border-bottom-color:rgba(94,255,178,.14)}
+.viewer-mode-notice{background:rgba(45,255,143,.08);border-color:rgba(45,255,143,.30);color:#b9cdc0}
+.owner-banner{background:rgba(56,225,255,.07);border-color:rgba(56,225,255,.30);color:#a9d8e8}
+:focus-visible{outline:2px solid #38e1ff;outline-offset:3px}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+@media (max-width: 700px) {
+  .access-row { flex-wrap: wrap; }
+  .access-row h2 { flex: 1 1 150px; }
+}

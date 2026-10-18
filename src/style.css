@@ -17,3 +17,43 @@
 @media(max-width:760px){.notebook{grid-template-columns:1fr}.note-list{border-right:0;border-bottom:1px solid var(--line);max-height:280px;overflow:auto}.note-list-item{padding:15px 20px}.note-list-item.active{padding-left:17px}.note-list-item p{display:none}.note-list-item b{display:inline-block;margin-right:12px}.note-search-wrap{padding:15px;position:sticky;top:0;background:#f3f6ed;z-index:1}.note-search-wrap small{margin-top:7px}.note-editor{padding:20px}.note-links{grid-template-columns:1fr 1fr}.note-links label:last-child{grid-column:1/-1}.note-links select{font-size:12px}.project-dashboard-grid{grid-template-columns:1fr}.workspace-shortcuts{gap:8px}.workspace-shortcuts .btn{flex:1 1 45%;font-size:10px;padding:11px}.project-dashboard-card h2{font-size:32px}.project-dashboard-card>p{min-height:0}.sidebar .nav-item{min-height:43px}.sidebar-bottom{padding-top:18px}}
 .project-extra{border:1px solid var(--line);padding:16px;margin:18px 0;border-radius:7px;background:#f8faf4}.project-extra summary{font-size:12px;cursor:pointer;color:#627d52}.project-extra[open] summary{margin-bottom:22px}.project-transfer{background:#edf3e6;border:1px solid var(--line);border-radius:8px;padding:20px 24px;display:flex;align-items:center;gap:25px;margin:0 0 23px}.project-transfer>div:first-child{flex:1}.project-transfer b{font-size:13px}.project-transfer p{font-size:11px;margin:7px 0 0;max-width:610px}.project-transfer .button-row{flex-shrink:0}.project-story-button{align-self:flex-start;margin:13px 0 20px}.project-dashboard-card>h2{margin-top:12px}.personal-interests .eyebrow{font-size:8px;color:#8c9e7c}.personal-interests h2{margin-top:13px}.personal-dream{padding:19px;background:#eef4e7;border:1px solid #dbe6d2;border-radius:6px;margin-top:25px;margin-bottom:0!important;line-height:1.9!important}.story-section{border-top:1px solid var(--line);padding-top:18px;margin:19px 0}.story-section h3{font-size:13px}.story-section p{font-size:12px;line-height:1.8}.project-item h3 .tag{font:9px system-ui;vertical-align:middle;letter-spacing:0}
 @media(max-width:1100px){.project-transfer{display:block}.project-transfer .button-row{margin-bottom:0}}@media(max-width:760px){.project-transfer{padding:20px}.project-transfer .button-row .btn{font-size:10px}.personal-interests h2{font-size:26px}.project-dashboard-card>h2{margin-top:14px}}
+
+/* ============================================================
+   ARCHIVERSE SHELL (Phase 2) — owner workspace, calm variant.
+   Same universe colours/glass as the public site; layout and
+   behaviour of the workspace are unchanged.
+   ============================================================ */
+:root{--accent:#17b96a;--line:rgba(94,255,178,.16);--paper:#05090a;--ink:#e8f6ec;--muted:#93aa9c;--white:#0a1510;--sage:rgba(45,255,143,.09);--mint:#d9ffe9}
+body{background:radial-gradient(900px 480px at 85% -5%,rgba(56,225,255,.06),transparent 60%),radial-gradient(1000px 600px at 8% 10%,rgba(45,255,143,.05),transparent 55%),linear-gradient(180deg,#04070a,#060d0a 55%,#03060a);color:var(--ink)}
+::selection{background:rgba(45,255,143,.35)}
+.sidebar{background:rgba(6,13,10,.94);border-right:1px solid var(--line)}
+.brand{color:#f2fbf4}
+.workspace-label,.nav-caption{color:#6f8a7a}
+.nav-item{color:#a9c2b2}
+.nav-item:hover{background:rgba(45,255,143,.10);color:#eafff1}
+.nav-item.active{background:linear-gradient(120deg,rgba(45,255,143,.92),rgba(23,185,106,.92));color:#03130a;box-shadow:0 8px 24px rgba(45,255,143,.22)}
+.topbar{background:rgba(5,10,8,.88);border-bottom:1px solid var(--line);backdrop-filter:blur(10px)}
+.crumb{color:#7d9687}.crumb b{color:#d9efe1}.crumb span{color:#42564a}
+.top-meta{color:#7d9687}
+.top-avatar{background:rgba(45,255,143,.14);border-color:rgba(94,255,178,.35);color:#8ff5c0}
+.panel,.stat-card{background:rgba(9,19,14,.72);border:1px solid var(--line);border-radius:14px;box-shadow:0 18px 44px rgba(0,0,0,.30)}
+.stat-card strong{color:#eafff1}
+.hero{background:linear-gradient(125deg,#07301f,#04150f 60%,#062a33);border:1px solid rgba(94,255,178,.22)}
+.btn{border-color:rgba(94,255,178,.28);color:#cfe6d6;background:rgba(10,22,16,.45);border-radius:99px}
+.btn:hover{background:rgba(45,255,143,.12);border-color:rgba(45,255,143,.55);color:#eafff1}
+.btn.primary{background:#2dff8f;border-color:#2dff8f;color:#03130a;font-weight:700}
+.btn.primary:hover{background:#38e1ff;border-color:#38e1ff;color:#02141c}
+.icon-btn{color:#8aa893}.icon-btn:hover{background:rgba(45,255,143,.12);color:#eafff1}
+input,select,textarea{background-color:#050c08;color:#eef7f0;border-color:rgba(94,255,178,.22)}
+input:focus,select:focus,textarea:focus{border-color:#2dff8f;box-shadow:0 0 0 3px rgba(45,255,143,.14);outline:none}
+option{background:#0a140f;color:#eef7f0}
+dialog{background:#071009;color:#eef7f0;border:1px solid rgba(94,255,178,.28)}
+dialog::backdrop{background:rgba(1,4,3,.78)}
+a{color:#38e1ff}
+.course-row:hover,.note-list-item:hover{background:rgba(45,255,143,.07)}
+.note-list{background:rgba(7,15,11,.85);border-right:1px solid var(--line)}
+.note-list-item.active{background:rgba(45,255,143,.12);border-left-color:#2dff8f}
+.project-next,.personal-dream,.hosting-path{background:rgba(45,255,143,.07);border-color:rgba(94,255,178,.20)}
+.project-transfer,.hosting-panel{background:rgba(9,19,14,.72)}
+.target-card{background:rgba(9,19,14,.72);border-color:var(--line)}
+:focus-visible{outline:2px solid #38e1ff!important;outline-offset:3px}

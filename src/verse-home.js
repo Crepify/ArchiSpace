@@ -155,6 +155,7 @@ export function renderVerseHome(display) {
     <button type="button" class="av-skip" id="av-loader-skip">Skip →</button>
   </div>
   <div class="av-entering" id="av-entering" hidden>Entering Archi Verse…</div>
+  <div class="av-progress" aria-hidden="true"><i id="av-progress-fill"></i></div>
 
   <header class="av-hud">
     <a class="av-wordmark" href="#top">ARCHI<span>VERSE</span></a>
@@ -210,6 +211,7 @@ export function renderVerseHome(display) {
       <div class="av-tunnel-sticky">
         <canvas id="av-tunnel-canvas" aria-hidden="true"></canvas>
         <div class="av-tunnel-ring" aria-hidden="true"></div>
+        <i class="av-ringpulse" style="--d:0s" aria-hidden="true"></i><i class="av-ringpulse" style="--d:1.6s" aria-hidden="true"></i><i class="av-ringpulse" style="--d:3.2s" aria-hidden="true"></i>
         <p class="av-eyebrow">SPACE-TIME TUNNEL · PROJECT FLYBY</p>
         <h2>Through the <em>Archi Verse</em></h2>
         <div class="av-tunnel-stage" id="av-tunnel-stage">
@@ -489,6 +491,37 @@ export function initVerse(display) {
     });
   }
 
+  // Premium motion: top scroll-progress + reveal-on-scroll (Solais rhythm).
+  const progressFill = root.querySelector('#av-progress-fill');
+  if (progressFill) {
+    const updProgress = () => {
+      const max = document.documentElement.scrollHeight - innerHeight;
+      progressFill.style.width = (max > 0 ? (scrollY / max) * 100 : 0) + '%';
+    };
+    updProgress();
+    addEventListener('scroll', updProgress, { passive: true });
+    cleanup.push(() => removeEventListener('scroll', updProgress));
+  }
+  if (!reduced) {
+    const rise = [...root.querySelectorAll('.av-seek-grid a, .av-card, .av-two > div, .av-graph-wrap, .av-chips, .av-edu, .av-aspiration')];
+    rise.forEach((el, i) => {
+      el.classList.add('av-rise');
+      el.style.transitionDelay = (i % 3) * 80 + 'ms';
+    });
+    const riseIo = new IntersectionObserver(
+      (es) =>
+        es.forEach((e) => {
+          if (e.isIntersecting) {
+            e.target.classList.add('in');
+            riseIo.unobserve(e.target);
+          }
+        }),
+      { threshold: 0.1 },
+    );
+    rise.forEach((el) => riseIo.observe(el));
+    cleanup.push(() => riseIo.disconnect());
+  }
+
   // Verse Model: scroll drives the active step (sticky pinned section).
   const modelSection = root.querySelector('#verse-model');
   const stepEls = [...root.querySelectorAll('.av-step')];
@@ -644,7 +677,7 @@ export function initVerse(display) {
         const pose = poseAt(Math.max(-1, Math.min(1, local)), side);
         card.style.visibility = 'visible';
         card.style.opacity = String(Math.max(0, Math.min(1, pose.opacity)));
-        card.style.transform = `translate(-50%,-50%) translate(${pose.x}px,${pose.y}px) scale(${pose.scale}) rotateY(${pose.rot}deg)`;
+        card.style.transform = `translate(-50%,-50%) translate(${pose.x}px,${pose.y}px) scale(${pose.scale}) rotateY(${pose.rot}deg) rotateX(4deg)`;
         card.style.zIndex = String(100 - Math.round(Math.abs(local) * 10));
         card.style.filter = `brightness(${1 - Math.min(0.45, Math.abs(local) * 0.5)})`;
       });

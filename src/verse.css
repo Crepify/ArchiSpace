@@ -278,3 +278,20 @@ html{scroll-behavior:smooth}
 @media (max-width:899px){
   #av-tunnel-canvas,.av-tunnel-ring,.av-tunnel-hud{display:none}
 }
+
+/* ---- Phase 2 premium motion ---- */
+.av-progress{position:fixed;top:0;left:0;right:0;height:3px;z-index:300;background:rgba(94,255,178,.08)}
+.av-progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--av-green),var(--av-cyan));box-shadow:0 0 14px rgba(45,255,143,.55)}
+.av-rise{opacity:0;transform:translateY(26px);transition:opacity .85s ease,transform .85s cubic-bezier(.2,.7,.2,1)}
+.av-rise.in{opacity:1;transform:none}
+.av-card{transition:transform .35s ease,border-color .35s ease,box-shadow .35s ease}
+.av-card:hover{transform:translateY(-4px);box-shadow:0 20px 44px rgba(0,0,0,.40)}
+.av-ringpulse{position:absolute;left:50%;top:54%;width:430px;height:430px;margin:-215px 0 0 -215px;border-radius:50%;
+  border:1px solid rgba(45,255,143,.35);z-index:0;pointer-events:none;opacity:0;animation:av-ringfly 4.8s linear infinite;animation-delay:var(--d)}
+@keyframes av-ringfly{0%{transform:scale(.12);opacity:0}14%{opacity:.45}72%{opacity:.22}100%{transform:scale(1.95);opacity:0}}
+.av-tunnel-card::after{content:'';position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(115deg,transparent 32%,rgba(190,255,220,.14) 48%,transparent 64%);
+  transform:translateX(-130%);animation:av-sheen 6s ease-in-out infinite}
+@keyframes av-sheen{0%,55%{transform:translateX(-130%)}88%,100%{transform:translateX(130%)}}
+.av-tunnel-card{transform-style:preserve-3d;box-shadow:0 40px 90px rgba(0,0,0,.62),0 0 52px rgba(45,255,143,.13)}
+@media (max-width:899px){.av-ringpulse{display:none}}
