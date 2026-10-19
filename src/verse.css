@@ -195,7 +195,7 @@ html{scroll-behavior:smooth}
 .av-model-sticky{position:sticky;top:0;min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:96px 28px 40px;max-width:1180px;margin:auto;overflow:hidden}
 .av-model-stage{position:relative;flex:1;min-height:420px}
 #av-model-canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
-.av-model-card{position:absolute;right:0;bottom:6%;width:min(390px,88vw);min-height:190px;pointer-events:none}
+.av-model-card{position:absolute;right:0;bottom:4%;width:min(390px,88vw);min-height:220px;pointer-events:none}
 .av-step{position:absolute;inset:0;opacity:0;transform:translateY(14px);transition:opacity .55s,transform .55s;border:1px solid var(--av-line);border-radius:18px;padding:24px;background:var(--av-panel);backdrop-filter:blur(8px)}
 .av-step.is-active{opacity:1;transform:none}
 .av-step p{font-family:var(--av-mono);font-size:10px;letter-spacing:2.4px;color:var(--av-cyan);margin:0 0 10px}
@@ -295,3 +295,43 @@ html{scroll-behavior:smooth}
 @keyframes av-sheen{0%,55%{transform:translateX(-130%)}88%,100%{transform:translateX(130%)}}
 .av-tunnel-card{transform-style:preserve-3d;box-shadow:0 40px 90px rgba(0,0,0,.62),0 0 52px rgba(45,255,143,.13)}
 @media (max-width:899px){.av-ringpulse{display:none}}
+
+/* ---- Phase 3: centre-crossing tunnel + Orizon-style stage dive ---- */
+/* Tunnel: docked screenshots grow to ~64vw and cross the centre line,
+   still alternating sides. A blurred enlarged copy glows behind each card
+   and a faded mirror reflection sits beneath it. */
+.av-tunnel-card{width:min(880px,64vw);overflow:visible}
+.av-tunnel-card img{border-radius:15px 15px 0 0}
+.av-tunnel-card figcaption{background:rgba(6,13,10,.92);border-radius:0 0 15px 15px}
+.av-tunnel-card::before{content:'';position:absolute;inset:-5% -4%;z-index:-1;border-radius:28px;
+  background-image:var(--shot);background-size:cover;background-position:center;
+  filter:blur(38px) saturate(1.35);opacity:.5;transform:translateZ(-70px) scale(1.1)}
+.av-tunnel-reflect{position:absolute;left:1%;right:1%;top:calc(100% + 8px);height:32%;
+  background-image:var(--shot);background-size:cover;background-position:center;
+  transform:scaleY(-1);opacity:.20;border-radius:16px;pointer-events:none;
+  -webkit-mask-image:linear-gradient(to top,#000 0%,transparent 82%);mask-image:linear-gradient(to top,#000 0%,transparent 82%)}
+/* Stage dive HUD (model section) */
+.av-dive-hud{display:flex;align-items:center;justify-content:space-between;gap:18px;margin:20px 0 4px;font-family:var(--av-mono);position:relative;z-index:3}
+.av-dive-stage,.av-dive-prog{font-size:10px;letter-spacing:2.6px;color:var(--av-muted);margin:0;white-space:nowrap}
+.av-dive-stage b,.av-dive-prog b{color:#eef7f0;font-size:13px}
+.av-dive-stage b{color:var(--av-green)}
+.av-dive-stage em{color:var(--av-cyan);font-style:normal}
+.av-dive-rail{display:flex;gap:6px;flex:1;max-width:340px}
+.av-dive-rail i{flex:1;height:3px;border-radius:99px;background:rgba(94,255,178,.15);transition:background .4s,box-shadow .4s}
+.av-dive-rail i.on{background:linear-gradient(90deg,var(--av-green),var(--av-cyan));box-shadow:0 0 10px rgba(45,255,143,.5)}
+.av-stage-bignum{position:absolute;right:1%;top:50%;transform:translateY(-50%);z-index:0;line-height:1;pointer-events:none;
+  font-family:var(--av-mono);font-weight:700;font-size:clamp(170px,24vw,300px);color:transparent;-webkit-text-stroke:1px rgba(94,255,178,.13)}
+#av-model-canvas{z-index:1}
+.av-model-card{z-index:3}
+.av-model-stage::before{content:'';position:absolute;inset:-12%;z-index:2;pointer-events:none;transition:opacity .6s;
+  background:radial-gradient(640px 340px at 50% 55%,var(--av-tint,rgba(45,255,143,.13)),transparent 65%)}
+.av-model[data-step="0"]{--av-tint:rgba(45,255,143,.15)}
+.av-model[data-step="1"]{--av-tint:rgba(56,225,255,.16)}
+.av-model[data-step="2"]{--av-tint:rgba(140,220,255,.13)}
+.av-model[data-step="3"]{--av-tint:rgba(182,255,122,.12)}
+.av-model[data-step="4"]{--av-tint:rgba(45,255,190,.16)}
+@media (max-width:899px){
+  .av-dive-hud,.av-stage-bignum{display:none}
+  .av-tunnel-reflect{display:none}
+  .av-tunnel-card::before{display:none}
+}

@@ -185,11 +185,17 @@ export function initModel3D({ canvas, section, display }) {
   }
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(46, 1, 0.1, 100);
-  camera.position.set(0, 0.4, 7);
+  camera.position.set(0, 0.4, 6.3);
   scene.add(new THREE.AmbientLight(0xffffff, 0.75));
   const g1 = new THREE.PointLight(GREEN, 70, 30); g1.position.set(4, 3, 5); scene.add(g1);
   const g2 = new THREE.PointLight(CYAN, 50, 30); g2.position.set(-4, -2, 5); scene.add(g2);
   scene.add(stars(300, 20));
+  // Rotating polar grid floor — the "dive stage" the model hovers over.
+  const grid = new THREE.PolarGridHelper(3.4, 12, 5, 72, GREEN, 0x2a5a3f);
+  grid.position.y = -1.58;
+  grid.material.transparent = true;
+  grid.material.opacity = 0.42;
+  scene.add(grid);
   const model = new THREE.Group();
   scene.add(model);
 
@@ -208,7 +214,7 @@ export function initModel3D({ canvas, section, display }) {
   parts.ai.add(makeLabel('AI', '#38e1ff', 52));
   model.add(parts.ai);
   // Software — terminal slab
-  parts.software = new THREE.Mesh(new THREE.BoxGeometry(0.72, 0.5, 0.1), mat(CYAN, CYAN, 0.35));
+  parts.software = new THREE.Mesh(new THREE.BoxGeometry(0.72, 0.5, 0.1), mat(CYAN, 0x0d6e8c, 0.35));
   parts.software.position.set(-1.5, 0.85, -0.2);
   parts.software.add(makeLabel('</>', '#38e1ff', 52));
   model.add(parts.software);
@@ -258,8 +264,12 @@ export function initModel3D({ canvas, section, display }) {
     ['space', 'projects'],
   ];
   const camSteps = [
-    [0, 0.4, 7], [1.2, 0.9, 5.6], [-1.3, 0.8, 5.6], [-0.9, -0.7, 5.8], [1.1, -0.4, 6.2],
+    [0, 0.4, 6.3], [1.2, 0.9, 5.1], [-1.3, 0.8, 5.1], [-0.9, -0.7, 5.3], [1.1, -0.4, 5.7],
   ];
+  // Per-stage light tint: the whole scene's colour shifts as you dive.
+  const stepTintA = [GREEN, CYAN, 0x8fdcff, 0xb6ff7a, 0x2dffbe];
+  const stepTintB = [CYAN, GREEN, CYAN, GREEN, CYAN];
+  const tmpA = new THREE.Color(GREEN), tmpB = new THREE.Color(CYAN);
   const clock = new THREE.Clock();
   let raf = 0, running = true, visible = true;
   const resize = () => {
@@ -277,6 +287,10 @@ export function initModel3D({ canvas, section, display }) {
       const step = Math.min(stepParts.length - 1, Math.max(0, Number(section.dataset.step || 0)));
       const active = new Set(stepParts[step]);
       model.rotation.y = t * 0.12;
+      model.position.y = Math.sin(t * 0.8) * 0.07;
+      grid.rotation.y = t * 0.05;
+      tmpA.setHex(stepTintA[step]); tmpB.setHex(stepTintB[step]);
+      g1.color.lerp(tmpA, 0.05); g2.color.lerp(tmpB, 0.05);
       ring1.rotation.z = t * 0.4; ring2.rotation.z = -t * 0.3;
       gear.rotation.z = t * 0.5;
       parts.projects.rotation.y = -t * 0.25;
@@ -287,7 +301,7 @@ export function initModel3D({ canvas, section, display }) {
         obj.scale.setScalar(obj.scale.x + (target - obj.scale.x) * 0.06);
         obj.traverse(o => {
           if (o.isMesh && o.material?.emissiveIntensity !== undefined) {
-            const base = on ? 1.15 : 0.28;
+            const base = on ? 0.92 : 0.30;
             o.material.emissiveIntensity += (base - o.material.emissiveIntensity) * 0.06;
           }
         });

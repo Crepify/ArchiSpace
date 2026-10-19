@@ -193,7 +193,13 @@ export function renderVerseHome(display) {
       <div class="av-model-sticky">
         <p class="av-eyebrow">THE VERSE MODEL · SCROLL TO INSPECT THE BUILDER</p>
         <h2>One builder.<br><em>Every system lit.</em></h2>
+        <div class="av-dive-hud" aria-hidden="true">
+          <p class="av-dive-stage">STAGE <b id="av-stage-cur">01</b><span> / 05</span> · <em id="av-stage-name">THE CORE</em></p>
+          <div class="av-dive-rail"><i class="on"></i><i></i><i></i><i></i><i></i></div>
+          <p class="av-dive-prog">PROGRESS <b id="av-stage-prog">0.000</b></p>
+        </div>
         <div class="av-model-stage">
+          <div class="av-stage-bignum" id="av-stage-bignum" aria-hidden="true">01</div>
           <canvas id="av-model-canvas" aria-label="3D model of Archit’s builder systems: core, AI, software, mechanical and space elements"></canvas>
           <div class="av-model-card" id="av-model-card">
             <article class="av-step is-active"><p>01 · THE CORE</p><h3>${esc(p.name || 'Archit Renjeev')}</h3><span>${esc(p.headline || '')} Scroll, and each system lights up in turn.</span></article>
@@ -203,7 +209,7 @@ export function renderVerseHome(display) {
             <article class="av-step"><p>05 · SPACE · PROJECTS · THE DREAM</p><h3>Systems that launch</h3><span>${esc(p.aspiration || 'One day, I want to build a startup.')} Projects in orbit: ${projects.map((x) => esc(x.title)).join(' · ') || 'coming soon'}.</span></article>
           </div>
         </div>
-        <p class="av-model-hint" aria-hidden="true">KEEP SCROLLING · THE MODEL GUIDES YOU ↓</p>
+        <p class="av-model-hint" aria-hidden="true">SCROLL TO DIVE IN · THE MODEL GUIDES YOU ↓</p>
       </div>
     </section>
 
@@ -218,7 +224,7 @@ export function renderVerseHome(display) {
           ${projects
             .flatMap((x) => mediaFor(x).map((m, mi) => ({ x, m, mi })))
             .map(
-              ({ x, m, mi }, i) => `<figure class="av-tunnel-card" data-tunnel="${i}" data-title="${esc(x.title)}" data-context="${esc(x.context || (mi ? 'Gallery view' : 'Project view'))}"><img src="${esc(m)}" alt="${esc(x.title)} screenshot supplied by Archit" loading="lazy"><figcaption><b>${esc(x.title)}</b><span>${esc(x.context || (mi ? 'Gallery view' : 'Project view'))}</span></figcaption></figure>`,
+              ({ x, m, mi }, i) => `<figure class="av-tunnel-card" data-tunnel="${i}" data-title="${esc(x.title)}" data-context="${esc(x.context || (mi ? 'Gallery view' : 'Project view'))}" style="--shot:url('${esc(m)}')"><img src="${esc(m)}" alt="${esc(x.title)} screenshot supplied by Archit" loading="lazy"><figcaption><b>${esc(x.title)}</b><span>${esc(x.context || (mi ? 'Gallery view' : 'Project view'))}</span></figcaption><i class="av-tunnel-reflect" aria-hidden="true"></i></figure>`,
             )
             .join('')}
         </div>
@@ -522,10 +528,18 @@ export function initVerse(display) {
     cleanup.push(() => riseIo.disconnect());
   }
 
-  // Verse Model: scroll drives the active step (sticky pinned section).
+  // Verse Model: scroll drives the active step (sticky pinned section),
+  // framed as an Orizon-style stage dive: STAGE counter, PROGRESS readout,
+  // chapter rail, giant stage numeral and per-stage scene tint.
   const modelSection = root.querySelector('#verse-model');
   const stepEls = [...root.querySelectorAll('.av-step')];
   if (modelSection && stepEls.length) {
+    const STAGE_NAMES = ['THE CORE', 'AI & DATA', 'SOFTWARE', 'MECHANICAL + ELECTRICAL', 'SPACE · PROJECTS · THE DREAM'];
+    const hudStage = root.querySelector('#av-stage-cur');
+    const hudName = root.querySelector('#av-stage-name');
+    const hudProg = root.querySelector('#av-stage-prog');
+    const hudNum = root.querySelector('#av-stage-bignum');
+    const hudRail = [...root.querySelectorAll('.av-dive-rail i')];
     const onScroll = () => {
       const r = modelSection.getBoundingClientRect();
       const total = Math.max(1, modelSection.offsetHeight - innerHeight);
@@ -533,6 +547,11 @@ export function initVerse(display) {
       const idx = Math.min(stepEls.length - 1, Math.floor(prog * stepEls.length));
       modelSection.dataset.step = String(idx);
       stepEls.forEach((el, i) => el.classList.toggle('is-active', i === idx));
+      if (hudStage) hudStage.textContent = String(idx + 1).padStart(2, '0');
+      if (hudName) hudName.textContent = STAGE_NAMES[idx] || '';
+      if (hudProg) hudProg.textContent = prog.toFixed(3);
+      if (hudNum) hudNum.textContent = String(idx + 1).padStart(2, '0');
+      hudRail.forEach((tick, i) => tick.classList.toggle('on', i <= idx));
     };
     onScroll();
     addEventListener('scroll', onScroll, { passive: true });
@@ -657,13 +676,10 @@ export function initVerse(display) {
         io.disconnect();
       });
     }
-    let ticking = false;
-    const drive = () => {
-      ticking = false;
-      const total = Math.max(1, tunnel.offsetHeight - innerHeight);
-      const prog = Math.min(1, Math.max(0, -tunnel.getBoundingClientRect().top / total));
-      warp = Math.min(1, warp + Math.abs(prog - lastProg) * 6);
-      lastProg = prog;
+    // Cinematic smoothing: card poses chase the real scroll position with a
+    // short lerp, so the flyby glides instead of stepping with the wheel.
+    let shownProg = -1, targetProg = 0, smoothing = false;
+    const renderTunnel = (prog) => {
       if (tunnelPct) tunnelPct.textContent = Math.round(prog * 100) + '%';
       if (capFill) capFill.style.width = prog * 100 + '%';
       tunnelCards.forEach((card, i) => {
@@ -688,15 +704,35 @@ export function initVerse(display) {
         if (capCount) capCount.textContent = String(tunnelCards.indexOf(active) + 1).padStart(2, '0');
       }
     };
-    const onScrollTunnel = () => {
-      if (!ticking) {
-        ticking = true;
-        requestAnimationFrame(drive);
+    const stepSmooth = () => {
+      shownProg += (targetProg - shownProg) * 0.16;
+      if (Math.abs(targetProg - shownProg) < 0.0006) {
+        shownProg = targetProg;
+        renderTunnel(shownProg);
+        smoothing = false;
+        return;
+      }
+      renderTunnel(shownProg);
+      requestAnimationFrame(stepSmooth);
+    };
+    const drive = () => {
+      const total = Math.max(1, tunnel.offsetHeight - innerHeight);
+      targetProg = Math.min(1, Math.max(0, -tunnel.getBoundingClientRect().top / total));
+      warp = Math.min(1, warp + Math.abs(targetProg - lastProg) * 6);
+      lastProg = targetProg;
+      if (shownProg < 0) {
+        shownProg = targetProg;
+        renderTunnel(shownProg);
+        return;
+      }
+      if (!smoothing) {
+        smoothing = true;
+        requestAnimationFrame(stepSmooth);
       }
     };
     drive();
-    addEventListener('scroll', onScrollTunnel, { passive: true });
-    cleanup.push(() => removeEventListener('scroll', onScrollTunnel));
+    addEventListener('scroll', drive, { passive: true });
+    cleanup.push(() => removeEventListener('scroll', drive));
   }
 
   // Reactor graph: selection + dragging
