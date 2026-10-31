@@ -160,4 +160,10 @@ Decisions locked by Archit (planning session):
   ran fine on Vercel's 8 GB builders.)
 - Fix: `vercel.json` now explicitly sets `buildCommand`, `installCommand`, and
   `outputDirectory: ".next"` (vercel.json takes precedence over dashboard settings).
-  Pushed and awaiting deployment confirmation.
+- **Deployed ✅** — commit `8f395b9`; GitHub deployment status: *success / "Deployment
+  has completed"*. Verified live on `https://architspace.vercel.app`: `/` serves the
+  Next desk (title "Archit Renjeev · Backend-focused developer…", 3D desk rendered in a
+  real browser), `/tools` `/owner` `/share` `/resume` all 200, `/tools.html` 308 →
+  `/tools`, calculator computes live in production, owner gate shows, `/owner` still
+  sends `no-store` + `X-Robots-Tag: noindex` headers, zero page errors. The previous
+  Vite implementation remains under `legacy-vite/` and in git history as fallback.
