@@ -1,9 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "framework": null,
-  "buildCommand": "npm run build:deploy",
-  "outputDirectory": "deploy",
-  "installCommand": "npm ci",
+  "framework": "nextjs",
   "headers": [
     {
       "source": "/(.*)",
@@ -19,7 +16,7 @@
       ]
     },
     {
-      "source": "/owner.html",
+      "source": "/owner",
       "headers": [
         {
           "key": "Cache-Control",
@@ -36,7 +33,41 @@
       ]
     },
     {
-      "source": "/share.html",
+      "source": "/share",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store"
+        },
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow, noarchive"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "no-referrer"
+        }
+      ]
+    },
+    {
+      "source": "/legacy/owner.html",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store"
+        },
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow, noarchive"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "no-referrer"
+        }
+      ]
+    },
+    {
+      "source": "/legacy/share.html",
       "headers": [
         {
           "key": "Cache-Control",
