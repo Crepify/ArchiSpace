@@ -144,3 +144,20 @@ Decisions locked by Archit (planning session):
   owner/share no-store + noindex protections.
 - Verified from the repo root before pushing: `npm run build` passes; homepage, `/tools`,
   `/owner`, `/share`, `/resume` all 200; calculator computes GPA 10.00/10; zero page errors.
+
+### Deployment status — 2026-10-31 (after push)
+
+- **Pushed to `main`:** `c8d9423` (production switch) + `3b2cfc1` (empty redeploy trigger).
+  GitHub remote `main` confirmed at `3b2cfc1`.
+- **Vercel build FAILED for both commits** (GitHub deployment statuses report failure;
+  deployments `dpl_J7XBKaX87fPr3gzcWoroPVp1SGN3` and `dpl_DRau…`). The live site still
+  serves the previous Vite build — **nothing is broken publicly**.
+- Root cause found from the build log the user pasted: the Next build itself **succeeded**
+  on Vercel; the deployment failed afterwards with `NEXT_OUTPUT_DIR_MISSING` — the Vercel
+  project still carried the old Vite-era **Output Directory: `deploy`** override, while
+  Next outputs to `.next`. (Local verification couldn't reproduce it: fresh-clone builds
+  here die from this sandbox's ~2 GB RAM / SIGBUS limits, while the same code built and
+  ran fine on Vercel's 8 GB builders.)
+- Fix: `vercel.json` now explicitly sets `buildCommand`, `installCommand`, and
+  `outputDirectory: ".next"` (vercel.json takes precedence over dashboard settings).
+  Pushed and awaiting deployment confirmation.
